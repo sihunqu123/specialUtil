@@ -1,4 +1,4 @@
-﻿package util.specialUtil;
+﻿package specialUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -289,11 +289,16 @@ public class Bili2PCConverter{
 		String jsonStr = null;
 		String title = null;
 		for(int i = 0; i < length; i++) {
-			if(files[i].isDirectory()) {
+			boolean isDirectory = files[i].isDirectory();
+			String path = files[i].getPath();
+			if(isDirectory) {
 				folders.add(files[i]);
-			} else if(files[i].getPath().endsWith(CONFIGNAME)){
+			} else if(path.endsWith(CONFIGNAME)){
 				jsonStr = ComFileUtil.readFile2String(files[i]);
-				ComLogUtil.info("set " + CONFIGNAME + " contents:" + jsonStr);
+				ComLogUtil.info("set " + CONFIGNAME + " files[i].getPath() - contents:" + jsonStr);
+				if(ComStrUtil.isBlankOrNull(jsonStr)) {
+					throw new Exception("File files[i].getPath() " + files[i].getPath() + " is empty. please handle this folder MANUALLY!!! Then run this program again.");
+				}
 				JSONObject jsonObject = new JSONObject(jsonStr);
 				title = jsonObject.getString("title");
 
@@ -312,6 +317,7 @@ public class Bili2PCConverter{
 
 			}
 		}
+		
 		if(title != null) {
 			doOneEntryJson(title, folders);
 		}

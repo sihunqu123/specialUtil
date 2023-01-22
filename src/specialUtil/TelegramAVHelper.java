@@ -1,4 +1,4 @@
-package util.specialUtil;
+package specialUtil;
 
 import static java.nio.file.LinkOption.NOFOLLOW_LINKS;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;

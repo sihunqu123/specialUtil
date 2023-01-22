@@ -1,4 +1,4 @@
-package util.specialUtil;
+package specialUtil;
 
 import java.io.File;
 import java.io.FileFilter;

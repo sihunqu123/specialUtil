@@ -1,4 +1,4 @@
-package util.specialUtil;
+package specialUtil;
 
 import org.mozilla.universalchardet.UniversalDetector;
 

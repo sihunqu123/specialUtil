@@ -1,4 +1,4 @@
-﻿package util.specialUtil;
+﻿package specialUtil;
 
 import java.io.File;
 import java.util.regex.Matcher;
@@ -8,6 +8,8 @@ import util.commonUtil.ComFileUtil;
 import util.commonUtil.ComRegexUtil;
 import util.commonUtil.ConfigManager;
 import util.commonUtil.interfaces.IConfigManager;
+import util.commonUtil.model.FileInfo;
+import util.commonUtil.model.FileName;
 
 /**
  *
@@ -25,7 +27,9 @@ public class ComRenameUtil{
 			originalAndroidPath = configManager.getString("originalAndroidPath");
 			System.out.println(originalAndroidPath);
 
-			replaceFlvBlv(originalAndroidPath);
+			
+//			removeTokyoHotPrefix(new File("F:\\Downloads\\test\\Tokyo Hot jup0022  -.mp4"));
+//			replaceFlvBlv(originalAndroidPath);
 //			replaceTokyo(originalAndroidPath);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -77,4 +81,23 @@ public class ComRenameUtil{
 
 		}
 	}
+	
+	public static File findAndAddNumberSuffix(File file) {
+//		int index = 1;
+		while(file.exists()
+//				&& index++ < 999
+				) {
+			file = new FileName(file).increaseTailNum().toFile();
+		}
+		return file;
+	}
+	
+	public static File replaceFileExtention(File file, String targetExtion) {
+		FileInfo fileInfo = ComFileUtil.getFileInfo(file);
+		fileInfo.setFileExt(targetExtion);
+		File targetFile = fileInfo.toFile();
+		file.renameTo(targetFile);
+		return targetFile;
+	}
+	
 }
