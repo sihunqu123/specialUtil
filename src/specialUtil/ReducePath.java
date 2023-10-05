@@ -31,10 +31,12 @@ public class ReducePath {
 
 	private static Boolean isPrintOnly = false;
 	private static Boolean isRenamePicByParent = false;
-	private static Boolean isRenameByParent = false;
+	private static Integer isRenameByParent = 0;
 	private static Boolean isRenameByParent_prepend = false;
 	private static Boolean isRenameByParent_force = false;
 	private static Boolean isRenameByVideo = false;
+	private static Integer bigVideoSizeFloorInMB = 100;
+	
 	
 	
 	public static void main(String[] args) {
@@ -45,10 +47,11 @@ public class ReducePath {
 		FolderToHandle = configManager.getString("FolderToHandle").trim();
 		isPrintOnly = "true".equalsIgnoreCase(configManager.getString("isPrintOnly"));
 		isRenamePicByParent = "true".equalsIgnoreCase(configManager.getString("isRenamePicByParent"));
-		isRenameByParent = "true".equalsIgnoreCase(configManager.getString("isRenameByParent"));
+		isRenameByParent = Integer.parseInt(configManager.getString("isRenameByParent"), 10);
 		isRenameByParent_prepend = "true".equalsIgnoreCase(configManager.getString("isRenameByParent_prepend"));
 		isRenameByParent_force = "true".equalsIgnoreCase(configManager.getString("isRenameByParent_force"));
 		isRenameByVideo = "true".equalsIgnoreCase(configManager.getString("isRenameByVideo"));
+		bigVideoSizeFloorInMB = Integer.parseInt(configManager.getString("bigVideoSizeFloorInMB"), 10);
 		
 		
 		// properties file doesn't support Chinese
@@ -105,6 +108,14 @@ public class ReducePath {
         } else {
 //        	ComLogUtil.info("won't remove this none-empty dir:" + dir);
         }
+        
+		
+		if("VIDEO_TS".equals(containerFolderName) || "BDMV".equals(containerFolderName)) {
+			// do nothing for disk folder
+			ComLogUtil.info("do nothing for disk folder: " + dir.getAbsolutePath());
+			return;
+		}
+        
 		int length = files.length;
 		List<File> folders = new ArrayList<File>();
 		List<File> nonFolders = new ArrayList<File>();
@@ -113,12 +124,15 @@ public class ReducePath {
 		List<File> subtitles = new ArrayList<File>();
 		
 		List<File> anchorVideos = new ArrayList<File>();
+		Boolean isDiskFolder = false;
 		
 		for(int i = 0; i < length; i++) {
 			File file = files[i];
-			String getAbsolutePath = file.getPath();
+			String absolutePath = file.getPath();
 			String nameOnly = file.getName();
+			
 			FileName fileFileName = new FileName(file);
+			String fileNameAndExtension = fileFileName.getFileNameAndExtension();
 //			ComLogUtil.info("file1:" + file.getAbsolutePath()); // file1:F:\Downloads\toMove\Mini传媒\mini01
 //			ComLogUtil.info("file2:" + file.getName()); // file2:mini01
 //			ComLogUtil.info("file3:" + file.getPath()); // file3:F:\Downloads\toMove\Mini传媒\mini01
@@ -128,11 +142,21 @@ public class ReducePath {
 //					doRemoveFolder(needToRm, file);
 //				} else {
 					folders.add(file);
+					if("BDMV".equalsIgnoreCase(nameOnly) || "CERTIFICATE".equalsIgnoreCase(nameOnly)) {
+						isDiskFolder = true;
+						return;
+					}
 //				}
 			} else {
+				String ext = fileFileName.getExt(true);
 				nonFolders.add(file);
+				if(".IFO".equalsIgnoreCase(ext)) {
+					isDiskFolder = true;
+					return;
+				}
+				
 				long filesizeMB = ComFileUtil.getFileSizeMB(file);
-				if(ComMediaUtil.isVideo(file) && filesizeMB > 100) {
+				if(ComMediaUtil.isVideo(file) && filesizeMB > bigVideoSizeFloorInMB) {
 					bigVideos.add(file);
 					String videoID = ComRegexUtil.getMatchedString(fileFileName.getFileNameOnly(), "^[a-zA-Z0-9]{1,7}-\\d{3}(?=\\][^ ])");
 					if(!ComStrUtil.isBlankOrNull(videoID)) {
@@ -157,216 +181,246 @@ public class ReducePath {
 		
 		Boolean isAlreadyProcessed = false;
 		
-		for(int i = 0; i < anchorVideos.size(); i++) {
-			File anchorVideo = anchorVideos.get(i);
-			FileName fileName = new FileName(anchorVideo);
-			String videoID = ComRegexUtil.getMatchedString(fileName.getFileNameOnly(), "^[a-zA-Z0-9]{1,7}-\\d{3}(?=\\][^ ])");
-			String videoMsg = "-" + fileName.getFileNameOnly().substring(videoID.length() + 1);
-			
-			for(int j = 0; j < nonFoldersSize; j++) {
-				File nonFolder = nonFolders.get(j);
-				FileName nonFolderFileName = new FileName(nonFolder);
-				String fileNameAndExtension = nonFolderFileName.getFileNameAndExtension();
-				String fileNameOnly = nonFolderFileName.getFileNameOnly();
-				// if it's not this file itself, and fileNameOnly match this videoId, and fileNameOnly has not been tuned by videoMsg yet
-				if(nonFolder != anchorVideo && ComRegexUtil.test(fileNameOnly, "^" + videoID + "[-_ ]") && fileNameOnly.indexOf(videoMsg) == -1) {
-					String restFileName = fileNameOnly.substring(videoID.length());
-					String newFileName = videoID + videoMsg + restFileName;
-					nonFolderFileName.setFileName(newFileName);
-					ComFileUtil.doRename(!isPrintOnly, nonFolder, nonFolderFileName.toFile(), "by anchorVideos");
-					isAlreadyProcessed = true;
-				}
-			}
-			
-		}
-		
-
-		
-		if(!isAlreadyProcessed && foldersSize <=1 && bigVideosSize <= 9) {
-			for(int i = 0; i < bigVideosSize; i++) {
-				File bigVideo = bigVideos.get(i);
-				FileName bigVideoFileName = new FileName(bigVideo);
+		if(isDiskFolder) {
+			ComLogUtil.info("do nothing for disk folder: " + dir.getAbsolutePath());
+		} else {
+			// skip handling dvd/Blueray disk folder.
+			for(int i = 0; i < anchorVideos.size(); i++) {
+				File anchorVideo = anchorVideos.get(i);
+				FileName fileName = new FileName(anchorVideo);
+				String videoID = ComRegexUtil.getMatchedString(fileName.getFileNameOnly(), "^[a-zA-Z0-9]{1,7}-\\d{3}(?=\\][^ ])");
+				String videoMsg = "-" + fileName.getFileNameOnly().substring(videoID.length() + 1);
 				
-				if(bigVideoFileName.getFileNameAndExtension().indexOf(containerFolderName) == -1) {
-					if(bigVideosSize == 1 && !isRenameByParent_force) {
-						bigVideoFileName.setFileName(containerFolderName);
-					} else {
-						if(isRenameByParent_prepend) {
-							bigVideoFileName.preAppend(containerFolderName + "_");
-						} else {
-							bigVideoFileName.append("_" + containerFolderName);
+				for(int j = 0; j < nonFoldersSize; j++) {
+					File nonFolder = nonFolders.get(j);
+					FileName nonFolderFileName = new FileName(nonFolder);
+					String fileNameAndExtension = nonFolderFileName.getFileNameAndExtension();
+					String fileNameOnly = nonFolderFileName.getFileNameOnly();
+					// if it's not this file itself, and fileNameOnly match this videoId, and fileNameOnly has not been tuned by videoMsg yet
+					if(nonFolder != anchorVideo && ComRegexUtil.test(fileNameOnly, "^" + videoID + "[-_ ]") && fileNameOnly.indexOf(videoMsg) == -1) {
+						String restFileName = fileNameOnly.substring(videoID.length());
+						String newFileName = videoID + videoMsg + restFileName;
+						nonFolderFileName.setFileName(newFileName);
+						ComFileUtil.doRename(!isPrintOnly, nonFolder, nonFolderFileName.toFile(), "by anchorVideos");
+						isAlreadyProcessed = true;
+					}
+				}
+				
+			}
+			
+			
+			
+			if(!isAlreadyProcessed && foldersSize <=1 && bigVideosSize <= 40) {
+				File floorIdvideo = getMinFileInVideoGroup(bigVideos);
+				
+				
+				for(int i = 0; i < bigVideosSize; i++) {
+					File bigVideo = bigVideos.get(i);
+					FileName bigVideoFileName = new FileName(bigVideo);
+					
+					Boolean folderNameAlreadyIncluded = bigVideoFileName.getFileNameAndExtension().indexOf(containerFolderName) > -1;
+					if(isRenameByParent == 2 && bigVideosSize > 1) {
+						
+						
+						
+						Boolean isVideoNameNoChinese = ComRegexUtil.testIg(bigVideoFileName.getFileNameOnly(), "^[a-z0-9._ ()\\[\\]-]+$");
+						if(!folderNameAlreadyIncluded && isVideoNameNoChinese) {
+							if(floorIdvideo == null) { // if it's not a videoGroup
+								// do nothing
+								
+								
+							} else { // if it's a videoGroup
+								String videoIndexNum = ComRegexUtil.getMatchedString(bigVideoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.])\\d{1,2}$");
+								if(ComStrUtil.isBlankOrNull(videoIndexNum)) {
+									videoIndexNum = ComRegexUtil.getMatchedString(bigVideoFileName.getFileNameOnly(), "^\\d{1,2}$");
+								}
+								String videoIndexAlpha = ComRegexUtil.getMatchedString(bigVideoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.])[a-zA-Z]$");
+								if(!ComStrUtil.isBlankOrNull(videoIndexNum)) {
+									bigVideoFileName.setFileName(containerFolderName + "-" + videoIndexNum);
+								} else if(!ComStrUtil.isBlankOrNull(videoIndexAlpha)) {
+									bigVideoFileName.setFileName(containerFolderName + "-" + videoIndexAlpha);
+								} else {
+									bigVideoFileName.setFileName(containerFolderName);
+								}
+								String msg = "rename by parentFolder from/to:\n" + bigVideo.getPath() + "\n" + bigVideoFileName.toString();
+								if(isRenameByParent == 2) {
+									ComFileUtil.doRename(!isPrintOnly, bigVideo, bigVideoFileName.toFile(), "isRenameByParent2");
+								} else {
+									ComLogUtil.debug(msg + " has been disabled!");
+								}
+							}
 						}
+						
+					} else  { // else 1, 0
+						if(!folderNameAlreadyIncluded) {
+							if(bigVideosSize == 1 && !isRenameByParent_force) {
+								bigVideoFileName.setFileName(containerFolderName);
+							} else {
+								if(isRenameByParent_prepend) {
+									bigVideoFileName.preAppend(containerFolderName + "_");
+								} else {
+									bigVideoFileName.append("-" + containerFolderName);
+								}
+							}
+							String msg = "rename by parentFolder from/to:\n" + bigVideo.getPath() + "\n" + bigVideoFileName.toString();
+							if(isRenameByParent != 0) {
+								ComFileUtil.doRename(!isPrintOnly, bigVideo, bigVideoFileName.toFile(), "isRenameByParent");
+							} else {
+								ComLogUtil.debug(msg + " has been disabled!");
+							}
+						}
+						
 					}
-					String msg = "rename by parentFolder from/to:\n" + bigVideo.getPath() + "\n" + bigVideoFileName.toString();
-					if(isRenameByParent) {
-						ComFileUtil.doRename(!isPrintOnly, bigVideo, bigVideoFileName.toFile(), "isRenameByParent");
-					} else {
-						ComLogUtil.info(msg + " has been disabled!");
-					}
+					
 				}
 			}
-		}
-		
-		// rename the only picture by the video group filename
-		if(!isAlreadyProcessed && picturesSize == 1 && bigVideosSize > 0 && isRenameByVideo) {
-			File picture = pictures.get(0);
-			FileName pictureFileName = new FileName(picture);
 			
-			if(bigVideosSize == 1) {
-				File video = bigVideos.get(0);
-				FileName videoFileName = new FileName(video);
-				if(!videoFileName.getFileNameOnly().equals(pictureFileName.getFileNameOnly())) {
-					String oldFileName = pictureFileName.toString();
-					pictureFileName.setFileName(videoFileName.getFileNameOnly());
-					String msg = "rename by videoFileName from/to:\n" + oldFileName + "\n" + pictureFileName.toString();
-					ComFileUtil.doRename(!isPrintOnly, picture, pictureFileName.toFile(), "by videoGroupFilename 1");
-					isAlreadyProcessed = true;
-				}
-			} else {
-				Map<Integer, File> videoParts = new HashMap<Integer, File>();
-				int minIndex = 999;
-				int maxIndex = -1;
-				Boolean isVideoGroup = true;
-				// iterate every videos see if all vides are in a group. e.g. filename-1.mp4, filename-2.mp4; Or filename-A.mp4, filename-B.mp4
-				for(int i = 0; i < bigVideosSize; i++) {
-					File video = bigVideos.get(i);
-					FileName videoFileName = new FileName(video);
-					String videoIndexNum = ComRegexUtil.getMatchedString(videoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.])\\d{1,2}$");
-					String videoIndexAlpha = ComRegexUtil.getMatchedString(videoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.])[a-zA-Z]$");
-					
-					if(ComStrUtil.isBlankOrNull(videoIndexNum) && ComStrUtil.isBlankOrNull(videoIndexAlpha)) {
-						// if not a video group
-						isVideoGroup = false;
-						break;
-					} else {
-						int videoIndex;
-						if(!ComStrUtil.isBlankOrNull(videoIndexNum)) {
-							videoIndex = Integer.parseInt(videoIndexNum, 10);
-						} else {
-							videoIndex = (int) (videoIndexAlpha.toLowerCase().charAt(0)) - 96;
-						}
-						if(videoIndex < minIndex) {
-							minIndex = videoIndex;
-						} else if(videoIndex > maxIndex) {
-							maxIndex = videoIndex;
-						}
-						videoParts.put(videoIndex, video);
-					}
-					
-				}
-				if(isVideoGroup) {
-					File video = videoParts.get(minIndex);
+			// rename the only picture by the video group filename
+			if(!isAlreadyProcessed && picturesSize == 1 && bigVideosSize > 0 && isRenameByVideo) {
+				File picture = pictures.get(0);
+				FileName pictureFileName = new FileName(picture);
+				
+				if(bigVideosSize == 1) {
+					File video = bigVideos.get(0);
 					FileName videoFileName = new FileName(video);
 					if(!videoFileName.getFileNameOnly().equals(pictureFileName.getFileNameOnly())) {
 						String oldFileName = pictureFileName.toString();
 						pictureFileName.setFileName(videoFileName.getFileNameOnly());
 						String msg = "rename by videoFileName from/to:\n" + oldFileName + "\n" + pictureFileName.toString();
-						ComFileUtil.doRename(!isPrintOnly, picture, pictureFileName.toFile(), "by videoGroupFilename >1");
+						ComFileUtil.doRename(!isPrintOnly, picture, pictureFileName.toFile(), "by videoGroupFilename 1");
 						isAlreadyProcessed = true;
 					}
+				} else {
+					File floorIdvideo = getMinFileInVideoGroup(bigVideos);
+					if(floorIdvideo != null) {
+						FileName videoFileName = new FileName(floorIdvideo);
+						if(!videoFileName.getFileNameOnly().equals(pictureFileName.getFileNameOnly())) {
+							String oldFileName = pictureFileName.toString();
+							pictureFileName.setFileName(videoFileName.getFileNameOnly());
+							String msg = "rename by videoFileName from/to:\n" + oldFileName + "\n" + pictureFileName.toString();
+							ComFileUtil.doRename(!isPrintOnly, picture, pictureFileName.toFile(), "by videoGroupFilename >1");
+							isAlreadyProcessed = true;
+						}
+					}
+					
 				}
 				
 			}
 			
-		}
-		
-		if(!isAlreadyProcessed && foldersSize == 0 && picturesSize == 1) {
-			for(int i = 0; i < picturesSize; i++) {
-				File picture = pictures.get(0);
-				FileName pictureFileName = new FileName(picture);
-
-				if(pictureFileName.getFileNameAndExtension().indexOf(containerFolderNameShort) == -1) {
-					pictureFileName.setFileName(containerFolderName);
-					String msg = "rename by parentFolder:\n" + picture.getPath() + "\nto\n" + pictureFileName.getFileNameAndExtension();
-					if(isRenamePicByParent) {
-						ComFileUtil.doRename(!isPrintOnly, picture, pictureFileName.toFile(), "isRenamePicByParent");
+			if(!isAlreadyProcessed && foldersSize == 0 && picturesSize >= 1) {
+				for(int i = 0; i < picturesSize; i++) {
+					File picture = pictures.get(i);
+					FileName pictureFileName = new FileName(picture);
+					
+					if(pictureFileName.getFileNameAndExtension().indexOf(containerFolderNameShort) == -1) {
+						if(picturesSize == 1 && !isRenameByParent_force) {
+							pictureFileName.setFileName(containerFolderName);
+						} else {
+							if(isRenameByParent_prepend) {
+								pictureFileName.preAppend(containerFolderName + "_");
+							} else {
+								pictureFileName.append("-" + containerFolderName);
+							}
+						}
+						String msg = "rename by parentFolder:\n" + picture.getPath() + "\nto\n" + pictureFileName.getFileNameAndExtension();
+						if(isRenamePicByParent) {
+							ComFileUtil.doRename(!isPrintOnly, picture, pictureFileName.toFile(), "isRenamePicByParent");
+							isAlreadyProcessed = true;
+						} else {
+							ComLogUtil.debug(msg + " has been disabled!");
+						}
+					}
+				}
+			}
+			
+			if(!isAlreadyProcessed && foldersSize == 0 && bigVideosSize == 1 && (subtitlesSize == 1 || picturesSize == 1)) {
+				File bigVideo = bigVideos.get(0);
+				if(isPrintOnly) {
+					ComLogUtil.error("Need to move " + bigVideo.getPath() + " to parent folder");
+				} else {
+					if(bigVideo.exists()) {
+						mvToParent(bigVideo);
 						isAlreadyProcessed = true;
+					}
+				}
+				
+				if(picturesSize == 1) {
+					File picture = pictures.get(0);
+					if(isPrintOnly) {
+						ComLogUtil.error("Need to move " + picture.getPath() + " to parent folder");
 					} else {
-						ComLogUtil.info(msg + " has been disabled!");
+						if(picture.exists()) {
+							mvToParent(picture);
+							isAlreadyProcessed = true;
+						}
 					}
 				}
-			}
-		}
-		
-		
-		
-		if(!isAlreadyProcessed && foldersSize == 0 && bigVideosSize == 1 && (subtitlesSize == 1 || picturesSize == 1)) {
-			File bigVideo = bigVideos.get(0);
-			if(isPrintOnly) {
-				ComLogUtil.error("Need to move " + bigVideo.getPath() + " to parent folder");
-			} else {
-				if(bigVideo.exists()) {
-					mvToParent(bigVideo);
-					isAlreadyProcessed = true;
+				
+				if(subtitlesSize == 1) {
+					File subtitle = subtitles.get(0);
+					if(isPrintOnly) {
+						ComLogUtil.error("Need to move " + subtitle.getPath() + " to parent folder");
+					} else {
+						if(subtitle.exists()) {
+							mvToParent(subtitle);
+							isAlreadyProcessed = true;
+						}
+					}
 				}
+				
+				return;
 			}
+			
+			
+			if(!isAlreadyProcessed && foldersSize == 0 && nonFoldersSize == 1) {
+				for(int i = 0; i < nonFoldersSize; i++) {
+					File nonFolder = nonFolders.get(i);
+					if(isPrintOnly) {
+						ComLogUtil.error("Need to move to parent folder: " + nonFolder.getPath());
+					} else {
+						if(nonFolder.exists()) {
+							mvToParent(nonFolder);
+							isAlreadyProcessed = true;
+						}
+					}
+				}
+				return;
+			}
+			
+			
+			// move dvd files to root
+			if(!isAlreadyProcessed && foldersSize == 1 && "VIDEO_TS".endsWith(folders.get(0).getName())
+					&& 
+					(
+							nonFoldersSize == 0 || // no other files
+							(nonFoldersSize == picturesSize) // or the other files are the pictures for this dvd
+							)
+					) {
+				File[] vobs = folders.get(0).listFiles();
+				for(int i = 0; i < vobs.length; i++) {
+					File vob = vobs[i];
+					if(isPrintOnly) {
+						ComLogUtil.error("Need to move " + vob.getPath() + " to parent folder");
+					} else {
+						if(vob.exists()) {
+							mvToParent(vob);
+							isAlreadyProcessed = true;
+						}
+					}
+				}
+				return;
+			}
+			
+		}
 
-			if(picturesSize == 1) {
-				File picture = pictures.get(0);
-				if(isPrintOnly) {
-					ComLogUtil.error("Need to move " + picture.getPath() + " to parent folder");
-				} else {
-					if(picture.exists()) {
-						mvToParent(picture);
-						isAlreadyProcessed = true;
-					}
-				}
-			}
-			
-			if(subtitlesSize == 1) {
-				File subtitle = subtitles.get(0);
-				if(isPrintOnly) {
-					ComLogUtil.error("Need to move " + subtitle.getPath() + " to parent folder");
-				} else {
-					if(subtitle.exists()) {
-						mvToParent(subtitle);
-						isAlreadyProcessed = true;
-					}
-				}
-			}
-			
-			return;
-		}
 		
-		
-		if(!isAlreadyProcessed && foldersSize == 0 && nonFoldersSize == 1) {
-			for(int i = 0; i < nonFoldersSize; i++) {
-				File nonFolder = nonFolders.get(i);
-				if(isPrintOnly) {
-					ComLogUtil.error("Need to move " + nonFolder.getPath() + " to parent folder");
-				} else {
-					if(nonFolder.exists()) {
-						mvToParent(nonFolder);
-						isAlreadyProcessed = true;
-					}
-				}
-			}
-			return;
-		}
-		
-		
-		// move dvd files to root
-		if(!isAlreadyProcessed && foldersSize == 1 && nonFoldersSize == 0 && "VIDEO_TS".endsWith(folders.get(0).getName())) {
-			File[] vobs = folders.get(0).listFiles();
-			for(int i = 0; i < vobs.length; i++) {
-				File vob = vobs[i];
-				if(isPrintOnly) {
-					ComLogUtil.error("Need to move " + vob.getPath() + " to parent folder");
-				} else {
-					if(vob.exists()) {
-						mvToParent(vob);
-						isAlreadyProcessed = true;
-					}
-				}
-			}
-			return;
-		}
 		
 		
 		for(int i = 0; i < foldersSize; i++) {
 			File nextFolder = folders.get(i);
 			
 			// Need to handle subtitle folder
+			
 			String nextFolderName = nextFolder.getName();
 			
 			if("Subs".equals(nextFolderName) || "Subtitles".equals(nextFolderName)) {
@@ -396,8 +450,65 @@ public class ReducePath {
 					}
 				}
 			}
+
+			String absolutePath = nextFolder.getPath();
+			if(ComRegexUtil.test(absolutePath, "\\\\(VIDEO_TS|BDMV)\\\\")) {
+				// do nothing for disk folder
+				ComLogUtil.info("do nothing for disk folder: " + absolutePath);
+				continue;
+			}
+
 			doOneLevel(nextFolder);
 		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param bigVideos
+	 * @return null is input is not an video group; Else the floow id File.
+	 */
+	private static File getMinFileInVideoGroup(List<File> bigVideos) {
+		Map<Integer, File> videoParts = new HashMap<Integer, File>();
+		int minIndex = 999;
+		int maxIndex = -1;
+		Boolean isVideoGroup = true;
+		int bigVideosSize = bigVideos.size();
+		// iterate every videos see if all vides are in a group. e.g. filename-1.mp4, filename-2.mp4; Or filename-A.mp4, filename-B.mp4
+		for(int i = 0; i < bigVideosSize; i++) {
+			File video = bigVideos.get(i);
+			FileName videoFileName = new FileName(video);
+			String videoIndexNum = ComRegexUtil.getMatchedString(videoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.])\\d{1,2}$");
+			if(ComStrUtil.isBlankOrNull(videoIndexNum)) {
+				videoIndexNum = ComRegexUtil.getMatchedString(videoFileName.getFileNameOnly(), "^\\d{1,2}$");
+			}
+			String videoIndexAlpha = ComRegexUtil.getMatchedString(videoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.])[a-zA-Z]$");
+			
+			if(ComStrUtil.isBlankOrNull(videoIndexNum) && ComStrUtil.isBlankOrNull(videoIndexAlpha)) {
+				// if not a video group
+				isVideoGroup = false;
+				break;
+			} else {
+				int videoIndex;
+				if(!ComStrUtil.isBlankOrNull(videoIndexNum)) {
+					videoIndex = Integer.parseInt(videoIndexNum, 10);
+				} else {
+					videoIndex = (int) (videoIndexAlpha.toLowerCase().charAt(0)) - 96;
+				}
+				if(videoIndex < minIndex) {
+					minIndex = videoIndex;
+				} else if(videoIndex > maxIndex) {
+					maxIndex = videoIndex;
+				}
+				videoParts.put(videoIndex, video);
+			}
+			
+		}
+		if(isVideoGroup) {
+			File video = videoParts.get(minIndex);
+			return video;
+		}
+		return null;
 	}
 	
 	private static List getVideosInFolder(File folder) {
@@ -442,7 +553,7 @@ public class ReducePath {
 			// then need to rename it's parent folder first
 			String parentPathNew = findAvailableName(parentPath);
 			boolean renamed = parent.renameTo(new File(parentPathNew));
-			String msg = "move to parent from:\n" + parentPath + "\nto\n" + parentPathNew;
+			String msg = "move to parent: " + renamed + " - " + parentPath;
 			if(renamed) {
 				ComLogUtil.error(msg + " succeed");
 				parent = new File(parentPathNew);
@@ -458,7 +569,7 @@ public class ReducePath {
 		File fileNew = ComRenameUtil.findAndAddNumberSuffix(new File(grandParent, nameOnlyNew));
 
 		boolean renameRet = (!isPrintOnly ? oriFile.renameTo(fileNew) : false);
-		String logStr = "move source File:\n" + file.getPath() + "\nto\n" + fileNew.getPath() + ":" + renameRet;
+		String logStr = "move to parent source File :" + file.getPath() + ":" + renameRet;
 		if(renameRet) {
 			ComLogUtil.error(logStr);
 		} else {

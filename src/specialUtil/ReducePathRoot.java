@@ -94,17 +94,28 @@ public class ReducePathRoot {
         } else {
 //        	ComLogUtil.info("won't remove this none-empty dir:" + dir);
         }
+        
+		
+		if("VIDEO_TS".equals(containerFolderName) || "BDMV".equals(containerFolderName)) {
+			// do nothing for disk folder
+			ComLogUtil.info("do nothing for disk folder: " + dir.getAbsolutePath());
+			return;
+		}
+        
+        
 		int length = files.length;
 		List<File> folders = new ArrayList<File>();
 		List<File> nonFolders = new ArrayList<File>();
 		List<File> bigVideos = new ArrayList<File>();
 		List<File> pictures = new ArrayList<File>();
 		List<File> subtitles = new ArrayList<File>();
+		Boolean isDiskFolder = false;
 		
 		for(int i = 0; i < length; i++) {
 			File file = files[i];
 			String getAbsolutePath = file.getPath();
 			String nameOnly = file.getName();
+			FileName fileFileName = new FileName(file);
 //			ComLogUtil.info("file1:" + file.getAbsolutePath()); // file1:F:\Downloads\toMove\Mini传媒\mini01
 //			ComLogUtil.info("file2:" + file.getName()); // file2:mini01
 //			ComLogUtil.info("file3:" + file.getPath()); // file3:F:\Downloads\toMove\Mini传媒\mini01
@@ -114,9 +125,20 @@ public class ReducePathRoot {
 //					doRemoveFolder(needToRm, file);
 //				} else {
 					folders.add(file);
+					if("BDMV".equalsIgnoreCase(nameOnly) || "CERTIFICATE".equalsIgnoreCase(nameOnly)) {
+						isDiskFolder = true;
+						return;
+					}
 //				}
 			} else {
+				String ext = fileFileName.getExt(true);
 				nonFolders.add(file);
+				
+				if(".IFO".equalsIgnoreCase(ext) || ".bup".equalsIgnoreCase(ext)) {
+					isDiskFolder = true;
+					return;
+				}
+				
 				long filesizeMB = ComFileUtil.getFileSizeMB(file);
 				if(ComMediaUtil.isVideo(file) && filesizeMB > 100) {
 					bigVideos.add(file);
@@ -136,17 +158,22 @@ public class ReducePathRoot {
 		int picturesSize = pictures.size();
 		int subtitlesSize = subtitles.size();
 
-		if(foldersSize == 0) {
-			for(int i = 0; i < nonFoldersSize; i++) {
-				File nonFolder = nonFolders.get(i);
-				if(isPrintOnly) {
-					ComLogUtil.error("Need to move " + nonFolder.getPath() + " to parent folder");
-				} else {
-					if(nonFolder.exists()) mvToParent(nonFolder);
+		if(isDiskFolder) {
+			ComLogUtil.info("do nothing for disk folder: " + dir.getAbsolutePath());
+		} else {
+			if(foldersSize == 0) {
+				for(int i = 0; i < nonFoldersSize; i++) {
+					File nonFolder = nonFolders.get(i);
+					if(isPrintOnly) {
+						ComLogUtil.error("Need to move to parent folder: " + nonFolder.getPath() + "");
+					} else {
+						if(nonFolder.exists()) mvToParent(nonFolder);
+					}
 				}
+				return;
 			}
-			return;
 		}
+		
 		
 		for(int i = 0; i < foldersSize; i++) {
 			File nextFolder = folders.get(i);
@@ -154,7 +181,30 @@ public class ReducePathRoot {
 			// Need to handle subtitle folder
 			String nextFolderName = nextFolder.getName();
 			
-			doOneLevel(nextFolder);
+			if(nextFolderName.endsWith("_KEEP")) {
+				ComLogUtil.debug("Skip reserved folder:" + containerFolderName);
+				continue;
+			}
+			
+			String absolutePath = nextFolder.getPath();
+//			if(ComRegexUtil.test(absolutePath, "\\\\(VIDEO_TS|BDMV)\\\\")) {
+//				// do nothing for disk folder
+//				ComLogUtil.info("do nothing for disk folder: " + absolutePath);
+//				continue;
+//			}
+			
+			if(ComRegexUtil.test(absolutePath, "\\\\(VIDEO_TS|BDMV|CERTIFICATE)\\\\")) {
+				// do nothing for disk folder
+				ComLogUtil.info("do nothing for disk folder: " + absolutePath);
+				continue;
+			}
+			
+			if(ComRegexUtil.test(nextFolderName, "_SKIP(_KEEP)?$")) {
+				// do nothing for disk folder
+				ComLogUtil.info("skip for skip folder: " + nextFolderName);
+			} else {
+				doOneLevel(nextFolder);
+			}
 		}
 	}
 	
@@ -204,7 +254,7 @@ public class ReducePathRoot {
 		File fileNew = ComRenameUtil.findAndAddNumberSuffix(new File(grandParent, nameOnlyNew));
 
 		boolean renameRet = (!isPrintOnly ? oriFile.renameTo(fileNew) : false);
-		String logStr = "move source File:\n" + file.getPath() + "\nto\n" + fileNew.getPath() + ":" + renameRet;
+		String logStr = "move source File to parent:\n" + file.getPath() + " - " + renameRet;
 		if(renameRet) {
 			ComLogUtil.error(logStr);
 		} else {
