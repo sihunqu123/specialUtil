@@ -218,32 +218,37 @@ public class ReducePath {
 					File bigVideo = bigVideos.get(i);
 					FileName bigVideoFileName = new FileName(bigVideo);
 					
-					Boolean folderNameAlreadyIncluded = bigVideoFileName.getFileNameAndExtension().indexOf(containerFolderName) > -1;
-					if(isRenameByParent == 2 && bigVideosSize > 1) {
+					String fileNameAndExtension = bigVideoFileName.getFileNameAndExtension();
+					Boolean folderNameAlreadyIncluded = fileNameAndExtension.indexOf(containerFolderName) > -1;
+					if((isRenameByParent == 2 || isRenameByParent == 4) && bigVideosSize >= 1) {
 						
 						
 						
 						Boolean isVideoNameNoChinese = ComRegexUtil.testIg(bigVideoFileName.getFileNameOnly(), "^[a-z0-9._ ()\\[\\]-]+$");
-						if(!folderNameAlreadyIncluded && isVideoNameNoChinese) {
+//						if(!folderNameAlreadyIncluded && isVideoNameNoChinese) {
+						if(!folderNameAlreadyIncluded) {
 							if(floorIdvideo == null) { // if it's not a videoGroup
 								// do nothing
-								
-								
+								if(isRenameByParent == 4 && bigVideosSize == 1) {
+									bigVideoFileName.setFileName(containerFolderName);
+									ComFileUtil.doRename(!isPrintOnly, bigVideo, bigVideoFileName.toFile(), "isRenameOnlyVideoByParentForce");
+								}
 							} else { // if it's a videoGroup
-								String videoIndexNum = ComRegexUtil.getMatchedString(bigVideoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.])\\d{1,2}$");
+								String videoIndexNum = ComRegexUtil.getMatchedStringIg(bigVideoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.]{1,9}(part|R)\\d{0,1})\\d{1,2}(?=(_8k){0,1}$)");
+								String videoRes = ComRegexUtil.getMatchedStringIg(bigVideoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.]{1,9}(part|R)\\d{0,1}\\d{1,2})_8K$");
 								if(ComStrUtil.isBlankOrNull(videoIndexNum)) {
 									videoIndexNum = ComRegexUtil.getMatchedString(bigVideoFileName.getFileNameOnly(), "^\\d{1,2}$");
 								}
-								String videoIndexAlpha = ComRegexUtil.getMatchedString(bigVideoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.])[a-zA-Z]$");
+								String videoIndexAlpha = ComRegexUtil.getMatchedString(bigVideoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.]{1,9}(part|R))[a-zA-Z]$");
 								if(!ComStrUtil.isBlankOrNull(videoIndexNum)) {
-									bigVideoFileName.setFileName(containerFolderName + "-" + videoIndexNum);
+									bigVideoFileName.setFileName(containerFolderName + "-" + videoIndexNum + videoRes);
 								} else if(!ComStrUtil.isBlankOrNull(videoIndexAlpha)) {
 									bigVideoFileName.setFileName(containerFolderName + "-" + videoIndexAlpha);
 								} else {
 									bigVideoFileName.setFileName(containerFolderName);
 								}
 								String msg = "rename by parentFolder from/to:\n" + bigVideo.getPath() + "\n" + bigVideoFileName.toString();
-								if(isRenameByParent == 2) {
+								if(isRenameByParent == 2 || isRenameByParent == 4) {
 									ComFileUtil.doRename(!isPrintOnly, bigVideo, bigVideoFileName.toFile(), "isRenameByParent2");
 								} else {
 									ComLogUtil.debug(msg + " has been disabled!");
@@ -262,11 +267,23 @@ public class ReducePath {
 									bigVideoFileName.append("-" + containerFolderName);
 								}
 							}
-							String msg = "rename by parentFolder from/to:\n" + bigVideo.getPath() + "\n" + bigVideoFileName.toString();
-							if(isRenameByParent != 0) {
+							String msg = "rename by parentFolder from/to:\n" + bigVideo.getPath() + "\n" + bigVideoFileName;
+							if(isRenameByParent == 0) {
+								// we DO need to rename by parent for vac and filename which contains '...'
+								if(fileNameAndExtension.indexOf("...") > 0 || ComRegexUtil.test(fileNameAndExtension, "^vac-")) {
+									// use `new FileName(bigVideo)` instead of `bigVideoFileName`, which has already been modified.
+									throw new Exception("Need to take special care about file to renameByParent: " + new FileName(bigVideo));
+								} else {
+									ComLogUtil.debug(msg + " has been disabled!");
+								}
+							} else if(isRenameByParent == 3) {
+								if(fileNameAndExtension.indexOf("...") > 0 || ComRegexUtil.test(fileNameAndExtension, "^vac-")) {
+									ComFileUtil.doRename(!isPrintOnly, bigVideo, bigVideoFileName.toFile(), "isRenameByParent");
+								} else {
+									ComLogUtil.debug(msg + " has been disabled!");
+								}
+							} else { // case 1
 								ComFileUtil.doRename(!isPrintOnly, bigVideo, bigVideoFileName.toFile(), "isRenameByParent");
-							} else {
-								ComLogUtil.debug(msg + " has been disabled!");
 							}
 						}
 						
@@ -478,7 +495,11 @@ public class ReducePath {
 		for(int i = 0; i < bigVideosSize; i++) {
 			File video = bigVideos.get(i);
 			FileName videoFileName = new FileName(video);
-			String videoIndexNum = ComRegexUtil.getMatchedString(videoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.])\\d{1,2}$");
+			String videoIndexNum = ComRegexUtil.getMatchedStringIg(videoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.]{1,9}(part|R)?)\\d{1,2}(?=(_8k){0,1}$)");
+//			if(ComStrUtil.isBlankOrNull(videoIndexNum)) {
+//				videoIndexNum = ComRegexUtil.getMatchedStringIg(videoFileName.getFileNameOnly(), "(?<=.{1,150}[-_.]{1,9}(part|R))\\d{1,2}(?=(_8k){0,1}$)");
+//			}
+			
 			if(ComStrUtil.isBlankOrNull(videoIndexNum)) {
 				videoIndexNum = ComRegexUtil.getMatchedString(videoFileName.getFileNameOnly(), "^\\d{1,2}$");
 			}

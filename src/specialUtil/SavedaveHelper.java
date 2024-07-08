@@ -89,6 +89,7 @@ public class SavedaveHelper{
 	final static long firstWeaponVal = 0x02; // use level 3 weapon, not level 4.
 	
 	public static void main(String args[]) throws IOException {
+		
 		int val = 0;
 		try {
 			fh = new RandomAccessFile(savedataFilePath, "rw");
@@ -101,18 +102,9 @@ public class SavedaveHelper{
 //		    ComLogUtil.info("old2: " + val);
 //		    fh.write(0xBB);
 		    
-			for(int i = 0; i < 48; i++) { // 192 weapons /4 = 48 persons
-				handle1Index(i);
-			}
 			
-			// handle exceptional guys
-			Set<Integer> keySet = customizePerson.keySet();
-			Iterator<Integer> iterator = keySet.iterator();
-			while(iterator.hasNext()) {
-				Integer next = iterator.next();
-				int[][] customizedWeaponEffect = customizePerson.get(next);
-				handle1Index(next, customizedWeaponEffect);
-			}
+//			tuneWeapon();
+			tuneUI();
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -126,6 +118,30 @@ public class SavedaveHelper{
 		}
 
 		ComLogUtil.info("save updated!");
+	}
+	
+	private static void tuneWeapon() throws IOException {
+		for(int i = 0; i < 48; i++) { // 192 weapons /4 = 48 persons
+			handle1Index(i);
+		}
+		
+		// handle exceptional guys
+		Set<Integer> keySet = customizePerson.keySet();
+		Iterator<Integer> iterator = keySet.iterator();
+		while(iterator.hasNext()) {
+			Integer next = iterator.next();
+			int[][] customizedWeaponEffect = customizePerson.get(next);
+			handle1Index(next, customizedWeaponEffect);
+		}
+	}
+	
+	private static void tuneUI() throws IOException {
+//		writeIntChar(0x000000d6, new int [] {0, 1});
+		
+		// max resolution for 4k version exe, which is 3840x2160
+		writeIntChar(0x000000da, new int [] {0x17, 1});
+		// max resolution for original exe, which is 1280x960
+//		writeIntChar(0x000000da, new int [] {0x03, 1});
 	}
 	
 	private static void handle1Index(int i) throws IOException {
