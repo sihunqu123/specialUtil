@@ -29,6 +29,8 @@ public class RenameFile {
 	private static Boolean isPrintOnly = true;
 
 	private static Boolean isAppendResolution = false;
+	private static Boolean isRemoveAdsStr = false;
+	private static Boolean isUppercaseVideoId = false;
 
 	public static void main(String[] args) throws Exception {
 		String FolderToHandle = "";
@@ -41,11 +43,13 @@ public class RenameFile {
 //		doOneLevel(new File("F:\\Downloads\\toMove\\Mini传媒\\"));
 		FolderToHandle = configManager.getString("FolderToHandle").trim();
 		isPrintOnly = "true".equalsIgnoreCase(configManager.getString("isPrintOnly"));
+		isRemoveAdsStr = "true".equalsIgnoreCase(configManager.getString("isRemoveAdsStr"));
+		isUppercaseVideoId = "true".equalsIgnoreCase(configManager.getString("isUppercaseVideoId"));
 		isAppendResolution = "true".equalsIgnoreCase(configManager.getString("isAppendResolution"));
 		
 		appendResultionIfFirstNumberGreaterThan = Integer.parseInt(configManager.getString("appendResultionIfFirstNumberGreaterThan"), 10);
 
-		doOneLevel(AdsVideoRm.convertToArrDir(FolderToHandle));
+		doOneLevel(ComFileUtil.convertToArrDir(FolderToHandle));
 	}
 
 	private static String[] adPrefixRegs = new String [] {
@@ -71,14 +75,15 @@ public class RenameFile {
 			"(?<=\\\\)\\[MyXav\\.Pw\\][-_ ]*(?=[^\\\\]+$)",
 			"(?<=\\\\)\\[www.[a-z][0-9]+\\.(com|cc|net)\\][-_ ]*(?=[^\\\\]+$)",
 			"(?<=\\\\)\\[[a-z][0-9]+\\.(com|cc|net)\\][-_ ]*(?=[^\\\\]+$)",
+			"(?<=\\\\.{1,88})\\[(rarbg|N1C|XvX|XC)\\][-_ ]*(?=[^\\\\]+$)",
 			
 			"(?<=\\\\)HTCdesireHD@(?=[^\\\\]+$)",
 			
 			"(?<=\\\\)SAMURAI PORN[-_ \\(]+(?=[^\\\\]+$)",
 			
 			"(?<=\\\\)\\[HD JAV Uncensored\\][ _-]*(?=[^\\\\]+$)",
-			
-			
+
+			 			
 			
 //			"(?<=\\\\)無修正リーク[-_ ]*(?=[^\\\\]+$)",
 			"(?<=\\\\)\\[HD Uncensored\\][-_ ]*(?=[^\\\\]+$)",
@@ -121,6 +126,9 @@ public class RenameFile {
 			"(?<=\\\\)\\(ブイワンVR\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(本中 VR\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(Fitch肉感VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(DOC VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(FSKnightsVisual VR\\)(?=[^\\\\]+$)",
+			
 			
 			"(?<=\\\\)1(?=FSVSS-\\d{3,4}[^\\\\]+$)",
 			"(?<=\\\\)\\d{1,3}(?=DTVR-\\d{3,4}[^\\\\]+$)",
@@ -162,6 +170,14 @@ public class RenameFile {
 			"(?<=\\\\)\\(Global VR\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(アリスJAPAN VR\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(痴女ヘブン VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(P-BOX VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(えむっ娘ラボ-VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(1113工房VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(HMN WORKS VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(ハンラシンVR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(HMN WORKS\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(溜池ゴローVR\\)(?=[^\\\\]+$)",
+			
 			
 			
 			"(?<=\\\\)\\[?(阳光)?电影(天堂)?[a-z]+\\.org[\\]\\.](?=[^\\\\]+$)",
@@ -204,6 +220,7 @@ public class RenameFile {
 
 			"(?<=\\\\)84(?=KMVR-[^\\\\]+$)",
 			"(?<=\\\\)84(?=kmvr-[^\\\\]+$)",
+			"(?<=\\\\)2(?=WPVR-\\d{3,99}[^\\\\]+$)",
 
 			"(?<=\\\\)(?!SLR_(Original|VR ))SLR_(?=[^\\\\]+$)", // SLR_VRMassage_Betzz_Cum.mp4 -> VRMassage_Betzz_Cum.mp4
 			// SLR_VRedging.mp4 => VRedging.mp4
@@ -215,7 +232,9 @@ public class RenameFile {
 			"(?<=\\\\)SLR_(?=VRConk_[^\\\\]+$)",
 			
 			"(?<=\\\\)55(?=tmavr-[^\\\\]+$)",
+			"(?<=\\\\)h_955(?=fsvr-[^\\\\]+$)",
 			
+			"(?<=\\\\.{1,150}) \\(1\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(kawaii VR\\)\\((?=[^\\\\]+$)",
 			"(?<=\\\\)\\(S1 VR\\)\\((?=[^\\\\]+$)",
 			"(?<=\\\\)\\(SSR VR\\)\\((?=[^\\\\]+$)",
@@ -304,14 +323,21 @@ public class RenameFile {
 			"(?<=\\\\)\\(MOODYZ\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(PRESTIGE ?VR\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(V＆R PRODUCE\\)(?=[^\\\\]+$)",
-			"(?<=\\\\)\\(KMP(VR)?\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(KMP(VR)?(彩-)?\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(DANDY(8K| )?VR\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(ダスッ！VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(えむっ娘ラボ\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(アリスJAPAN\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(痴女ヘブン\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(ダスッ！\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(Aircontrol VR\\)(?=[^\\\\]+$)",
+			
 			
 
 			"(?<=\\\\.{1,30})-VR(?=\\.[^.\\\\]+$)",
-			"(?<=\\\\.{1,88}).MP4-LUST(?=\\.[^.\\\\]+$)",
-			"(?<=\\\\.{1,88}).MP4-Zsex3i(\\[rarbg\\])?(?=\\.[^.\\\\]+$)",
+			"(?<=\\\\.{1,88}).(WMV|MP4)-(LUST|KTR|Zsex3i|SEXORS|FETiSH)(?=\\.[^.\\\\]+$)",
+//			"(?<=\\\\.{1,88}).(WMV|MP4)-(KTR)(?=\\.[^.\\\\]+$)",
+//			"(?<=\\\\.{1,88}).MP4-Zsex3i(\\[rarbg\\])?(?=\\.[^.\\\\]+$)",
 			
 
 //			"(?<=\\\\.{1,99})_7680x3840(?=\\.mp4$)",
@@ -448,7 +474,9 @@ public class RenameFile {
 
 			"dandy8kvr-\\d{3,4}(?=[-._ ][^\\\\]+$)",
 
-			"^fc2[ _-]*ppv(?=[-._ ][^\\\\]+$)"
+			"^fc2[ _-]*ppv(?=[-._ ][^\\\\]+$)",
+			"^drvr(?=[-._ ][^\\\\]+$)"
+			
 
 
 	};
@@ -456,6 +484,9 @@ public class RenameFile {
 	private static String[][] adReplaceRegs = new String [][] {
 		{"(?<=\\\\)\\(?+([^(.]+)\\.[^(\\)]+\\)(?=[^\\\\]+$)", "$1-"}, // (vkrm1001.abcdef)new-artist.mp4 => vkrm1001-new-artist.mp4
 		
+		{"(?<=\\\\)(FacialAbuse )(?=E\\d{1,4}[^\\\\]+$)", "FacialAbuse."},
+
+		{"(?<=\\\\.{1,150})([ .-]XXX[ .-])(?=[^\\\\]+$)", "_"},
 //		{"(?<=\\\\\\w{1,9})0+(?=[1-9]\\d{0,9}[^\\\\]+$)", "-"},
 		{"(?<=\\\\\\w{1,9}[a-z])0{2}(?=\\d{3}[^\\d][^\\\\]+$)", "-"},      // abc00123.mp4 => abc-123.mp4
 		{"(?<=\\\\\\w{1,9}[a-z])0(?=\\d{2}[^\\d][^\\\\]+$)", "-0"},      // abc023.mp4 => abc-023.mp4
@@ -509,6 +540,7 @@ public class RenameFile {
 		{"(?<=\\\\)(czechvrfetish)([. _-]{1,9})(?=[^\\\\]+$)", "CzechVRFetish-"}, // czechvrfetish-108.mp4 => CzechVRFetish-108.mp4
 		{"(?<=\\\\)(kinkvr)([. _-]{1,9})(?=[^\\\\]+$)", "KinkVR-"}, // kinkvr-108.mp4 => KinkVR-108.mp4
 		{"(?<=\\\\)(milfvr)([. _-]{1,9})(?=[^\\\\]+$)", "MilfVR-"}, // milfvr-108.mp4 => MilfVR-108.mp4
+		{"(?<=\\\\)(virtualrealporn)([. _-]{1,9})(?=[^\\\\]+$)", "VirtualRealPorn-"}, // virtualrealporn-108.mp4 => VirtualRealPorn-108.mp4
 		{"(?<=\\\\)(xvirtual)([. _-]{1,9})(?=[^\\\\]+$)", "XVirtual-"}, // xvirtual-108.mp4 => XVirtual-108.mp4
 		{"(?<=\\\\)(POVcentralVR)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // POVcentralVR-108.mp4 => POVCentralVR-108.mp4
 		{"(?<=\\\\)(povcentralvr)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // povcentralvr-108.mp4 => POVCentralVR-108.mp4
@@ -858,7 +890,7 @@ public class RenameFile {
 	}
 	
 	private static void doOneLevel(File[] dirs) throws Exception {
-		List<File> files = AdsVideoRm.unionDirs(dirs);
+		List<File> files = ComFileUtil.unionDirs(dirs);
         int length = files.size();
 		List<File> folders = new ArrayList<File>();
 		for(int i = 0; i < length; i++) {
@@ -880,9 +912,9 @@ public class RenameFile {
 				if(ComFileUtil.getFileName(originFile, false).endsWith("_KEEP")) {
 					// skip for KEEP file
 				} else {
-					if(originFile == file) file = removeAdsPrefix(file);
-					if(originFile == file) file = removePreSuffSpace(file);
-					if(originFile == file) file = replaceAds(file);
+					if(originFile == file && isRemoveAdsStr) file = removeAdsPrefix(file);
+					if(originFile == file && isRemoveAdsStr) file = removePreSuffSpace(file);
+					if(originFile == file && isUppercaseVideoId) file = replaceAds(file);
 //				if(originFile == file) removeAdsPrefix(file);
 //				if(originFile == file) removePreSuffSpace(file);
 					if(originFile == file) file = UppercaseVideoID(file);
@@ -944,6 +976,7 @@ public class RenameFile {
 				|| ComRegexUtil.testIg(fileNameOnly, "[- _.][4-8]k([- _.]|$)")  // PVRStudio_8k_.mp4 PVRStudio_8k.mp4
 //				|| ComRegexUtil.testIg(fileNameOnly, "[- _.][1-9]\\d{3}p[- _.]")
 //				|| ComRegexUtil.testIg(fileNameOnly, "[- _.][1-9]\\d{3}p$")
+				|| ComRegexUtil.testIg(fileNameOnly, "[- _.\\[\\]]1080p[- _.\\[\\]]")
 				|| ComRegexUtil.testIg(fileNameOnly, "[- _.][1-9]\\d{3}p([- _.]|$)")  // PVRStudio_4096p_.mp4 PVRStudio_4096p.mp4
 				;
 		File ret = file;

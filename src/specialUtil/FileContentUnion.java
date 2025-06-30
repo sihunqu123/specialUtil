@@ -43,7 +43,7 @@ import util.media.ComMediaUtil;
  * @author sihun
  *
  */
-public class TorrentInfoExtractor {
+public class FileContentUnion {
 	
 	private static IConfigManager configManager;
 	
@@ -94,18 +94,11 @@ public class TorrentInfoExtractor {
 			FileName fileName = new FileName(file);
 			String fileNameOnly = null;
 			String fileExtension = null;
-			if(!file.isDirectory()) {
-				ComLogUtil.error("Ignore file in the root folder: " + fileName);
-			} else {
-				if(ComRegexUtil.testIg(file.getPath(), "[\\/\\\\]images$")) {
-					ComLogUtil.error("Ignore the images folder in the root folder: " + file.getPath());
-					continue;
-				}
-//				if(ComRegexUtil.testIg(file.getPath(), "[\\/\\\\]rar$")) {
-//					ComLogUtil.error("Ignore the rar folder in the root folder: " + file.getPath());
-//					continue;
-//				}
+			if(file.isDirectory()) {
 				List<String> extract1Folder = extract1Folder(file);
+				links.addAll(extract1Folder);
+			} else {
+				List<String> extract1Folder = extractMagnetFromFile(file);
 				links.addAll(extract1Folder);
 			}
 		}
@@ -123,56 +116,9 @@ public class TorrentInfoExtractor {
 		String[] split = readFile2String.split("\n");
 		List<String> links = new ArrayList<String>();
 		
-		Boolean is8KMode = !ComStrUtil.isBlankOrNull(ComRegexUtil.getMatchedStringIg(readFile2String, "_8k"));
-		
 		for(int i = 0; i < split.length; i++) {
 			String line = split[i];
-			String ed2kLink = ComRegexUtil.getMatchedStringIg(line, "(?<=\\s*)ed2k:[^\\n]+");
-			Boolean is8KLink = !ComStrUtil.isBlankOrNull(ComRegexUtil.getMatchedStringIg(line, "_8k"));
-			Boolean isRar = line.indexOf(".rar") > 0;
-		
-			if(ComStrUtil.isBlankOrNull(ed2kLink)) {
-				// skip useless line.
-				continue;
-			}
-			
-			Boolean is8kOnly = true;
-			Boolean isRarOnly = true;
-			
-			if(is8kOnly) {
-				// save 8k only rar
-				if(is8KMode) {
-					
-					if(isRar && isRarOnly) {
-						links.add(ed2kLink);
-						ComLogUtil.info("adding link: " + ed2kLink + " from file: " + file.getPath());
-					}
-					
-					if(!isRar && !isRarOnly && is8KLink) {
-						links.add(ed2kLink);
-						ComLogUtil.info("adding link: " + ed2kLink + " from file: " + file.getPath());
-					}
-				}
-			} else {
-				// save non-8k only rar
-				if(!is8KMode && isRar) {
-					links.add(ed2kLink);
-				}
-			}
-			
-			/*
-			if(isRar) {
-				 links.add(ed2kLink);
-			} else if(is8KMode && is8KLink) { // if it's a 8k link
-				links.add(ed2kLink);
-			} else {
-				// do nothing for non-8k link
-//				if(!is8KMode) links.add(ed2kLink);
-			}
-			*/
-		}
-		if(links.size() == 0) {
-//			throw new Exception("Error extrating magnet links - No link found in file: " + file);
+			links.add(line);
 		}
 		return links;
 	}
@@ -190,27 +136,8 @@ public class TorrentInfoExtractor {
 		// first store all fileNames
 		for(int i = 0; i < length; i++) {
 			File file = files[i];
-			FileName fileName = new FileName(file);
-			String fileNameOnly = fileName.getFileNameAndExtension();
-			String fileExtension = null;
-			if(file.isDirectory()) {
-				throw new Exception("Error - unexpected subFolder:" + fileName);
-			}
-			fileNameOnly = fileName.getFileNameAndExtension();
-			fileExtension = fileName.getExt();
-			if(!".txt".equals(fileExtension)) {
-				ComLogUtil.info("skip none-text file type : " + fileName);
-				continue;
-			}
-			if(fileNameOnly.startsWith("解壓密碼")) {
-				ComLogUtil.info("skip 解壓密碼: " + fileName);
-				continue;
-			}
-			
-			
-			List<String> extractMagnetFromFile = extractMagnetFromFile(file);
-			links.addAll(extractMagnetFromFile);
-			break;
+			List<String> extract1Folder = extractMagnetFromFile(file);
+			links.addAll(extract1Folder);
 		}
 		return links;
 	}

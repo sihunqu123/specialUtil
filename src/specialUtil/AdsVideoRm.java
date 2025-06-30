@@ -76,16 +76,7 @@ public class AdsVideoRm {
 		isRemoveSameFileLowResfile = "true".equalsIgnoreCase(configManager.getString("isRemoveSameFileLowResfile"));
 		isRemoveSameDurationfile = "true".equalsIgnoreCase(configManager.getString("isRemoveSameDurationfile"));
 		
-		doOneLevelRm(AdsVideoRm.convertToArrDir(FolderToHandle));
-	}
-	
-	public static File[] convertToArrDir(String folderStr) {
-		String[] dirsStr = folderStr.split(",");
-		File[] dirs = new File[dirsStr.length];
-		for(int i = 0; i < dirs.length; i++) {
-			dirs[i] = new File(dirsStr[i]); 
-		}
-		return dirs;
+		doOneLevelRm(ComFileUtil.convertToArrDir(FolderToHandle));
 	}
 	
 	public static void rmAds(File[] targetPaths) throws Exception {
@@ -163,37 +154,6 @@ public class AdsVideoRm {
 		doOneLevelRm(nextFolderArr);
 	}
 	
-	
-	public static List<File> unionDirs(File[] dirs) throws Exception {
-		List<File> files = new ArrayList<File>();
-		for(int h = 0; h < dirs.length; h++) {
-			File dir = dirs[h];
-			File[] dirFiles = dir.listFiles();
-			if(dirFiles == null) {
-				ComLogUtil.error("listed files is null, maybe the explorer.exe is hold the handler of this empty dir. dir:" + dir);
-				continue;
-			}
-			if(dirFiles.length == 0) {
-				ComLogUtil.error("will remove this empty dir:" + dir);
-				if(!isPrintOnly) ComFileUtil.delFileAndFolder(dir);
-				continue;
-			} else {
-//        	ComLogUtil.info("won't remove this none-empty dir:" + dir);
-				
-				// add dirFiels into files to later operation
-				for(int m = 0; m < dirFiles.length; m++) {
-					File dirFile = dirFiles[m];
-					if(files.contains(dirFile)) {
-						doRemove(true, dirFile, "depFileInDifferentFolder");
-					} else {
-						files.add(dirFile);
-					}
-				}
-			}
-		}
-		return files;
-	}
-	
 	/**
 	 * step 1: find all entry.json file
 	 * step 2: iterate every entry.json
@@ -208,7 +168,7 @@ public class AdsVideoRm {
 	 * @throws Exception
 	 */
 	private static void doOneLevelRm(File[] dirs) throws Exception {
-		List<File> files = AdsVideoRm.unionDirs(dirs);
+		List<File> files = ComFileUtil.unionDirs(dirs);
 
 		int length = files.size();
 		String containerFolderName = dirs[0].getName();
@@ -555,7 +515,7 @@ public class AdsVideoRm {
 		if(!isRemoveSameDurationfile) {
 			return;
 		};
-		List<File> files = unionDirs(dirs);
+		List<File> files = ComFileUtil.unionDirs(dirs);
 //		File[] files = dir.listFiles();
         
 		int length = files.size();
@@ -596,16 +556,17 @@ public class AdsVideoRm {
 				return true;
 			}
 			return false; 
-		}).forEach(list -> {
+		}).forEach(list -> { // for those file that has dup duration files.
 			Optional<File> max = list.stream().max(Comparator.comparing(File::length));
 			if(max.isPresent()) {
 				File maxFile = max.get();
 				if(maxFile.exists()) {
 					list.stream().forEach(file -> {
 //						ComLogUtil.info("check file: " + file);
-						boolean needToRm = file != maxFile;
+						boolean needToRm = file != maxFile; // only keep the max size file
 						try {
-							doRemove(needToRm, file, "removeDupDuration", true, true);
+//							doRemove(needToRm, file, "removeDupDuration", true, true);
+							doRemove(needToRm, file, "removeDupDuration", true, false);
 						} catch (IOException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -720,6 +681,8 @@ public class AdsVideoRm {
 			        char charAt = (str.trim() + "n").trim().toLowerCase().charAt(0);
 			        if(charAt == 'y') {
 			        	ComLogUtil.info("delete confirmed");
+			        	// TODO implement the file delete action.
+			        	file.delete(); 
 			        } else {
 			        	ComLogUtil.info("delete canceled");
 			        }
