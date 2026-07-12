@@ -53,6 +53,17 @@ public class RenameFile {
 	}
 
 	private static String[] adPrefixRegs = new String [] {
+			"(?<=\\\\)\\(请关注TG群：?https?冒号t.me斜杠Movies_VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(请关注电报群：https冒号两个斜杠t.me斜杠VR180SP）(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(请关注TG群：Movies_VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(请关注TG群：?http冒号Movies_VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)请关注TG群：https冒号t.me斜杠Movies_VR(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(请关注TG群：https冒号t(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(请关注TG群：https冒号t(?=[^\\\\]+$)",
+			"(?<=\\\\)\\[\\](?=[^\\\\]+$)",
+			
+			
+			
 			
 			"(?<=\\\\)\\(SAMURAI PORN\\)[-_ ]*(?=[^\\\\]+$)",
 			"(?<=\\\\)mw6.me[-_ @]*(?=[^\\\\]+$)",
@@ -82,7 +93,9 @@ public class RenameFile {
 			"(?<=\\\\)SAMURAI PORN[-_ \\(]+(?=[^\\\\]+$)",
 			
 			"(?<=\\\\)\\[HD JAV Uncensored\\][ _-]*(?=[^\\\\]+$)",
+			
 
+			
 			 			
 			
 //			"(?<=\\\\)無修正リーク[-_ ]*(?=[^\\\\]+$)",
@@ -128,13 +141,21 @@ public class RenameFile {
 			"(?<=\\\\)\\(Fitch肉感VR\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(DOC VR\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(FSKnightsVisual VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(FunCity VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(Berry Blue\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(ハンラシン\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(ガン見隊\\)(?=[^\\\\]+$)",
+			
+			
+			
 			
 			
 			"(?<=\\\\)1(?=FSVSS-\\d{3,4}[^\\\\]+$)",
+			"(?<=\\\\)1(?=MTVR-\\d{3,4}[^\\\\]+$)",
+			"(?<=\\\\)1(?=nhvr[^\\\\]+$)",
 			"(?<=\\\\)\\d{1,3}(?=DTVR-\\d{3,4}[^\\\\]+$)",
 			"(?<=\\\\)h_\\d{3}(?=fsvr-\\d{3,4}[^\\\\]+$)",
 
-			"(?<=\\\\)1(?=nhvr[^\\\\]+$)",
 			"(?<=\\\\)AF-(?=CRVR[^\\\\]+$)",
 			"(?<=\\\\)huigezai *东京(熱|热) *(?=[^\\\\]+$)",
 
@@ -248,6 +269,11 @@ public class RenameFile {
 			"(?<=\\\\)\\(WANZ VR\\)\\((?=[^\\\\]+$)",
 			"(?<=\\\\)\\(お夜食カンパニー\\)\\((?=[^\\\\]+$)",
 			"(?<=\\\\)\\(レゾレボVR\\)\\((?=[^\\\\]+$)",
+			"(?<=\\\\)\\(痴女ヘブンVR\\)\\((?=[^\\\\]+$)",
+			"(?<=\\\\)\\(Mrmichiru VR\\)\\((?=[^\\\\]+$)",
+			"(?<=\\\\)\\(Attackers VR\\)\\((?=[^\\\\]+$)",
+			
+			
 			
 			
 			// "(?<=\\\\[^\\\\]{1,99})_1\\[0x1e0\\]_closedCaption_condensed_translaste(?=[^\\\\]+$)",
@@ -331,6 +357,8 @@ public class RenameFile {
 			"(?<=\\\\)\\(痴女ヘブン\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(ダスッ！\\)(?=[^\\\\]+$)",
 			"(?<=\\\\)\\(Aircontrol VR\\)(?=[^\\\\]+$)",
+			"(?<=\\\\)\\(なまなまVR\\)(?=[^\\\\]+$)",
+			
 			
 			
 
@@ -374,9 +402,13 @@ public class RenameFile {
 			"(?<=\\\\.{1,99})_4K$", // for folder
 
 			"(?<=\\\\.{1,99})\\.XXX(?=\\.[^\\\\]+$)",
+			"(?<=\\\\.{1,99})\\.XXX(?=\\.[^\\\\]+$)",
+			
 
+			"(?<=\\\\.{1,90}.{1,99}mp4)\\.mp4",
 
-
+			
+			"(?<=\\\\.{1,90})_\\[www\\.avswitch\\.org\\](?=\\.[^.\\\\]+$)",
 			"(?<=\\\\.{1,90})--更多视频访问\\[[^]]+\\](?=\\.[^.\\\\]+$)",
 			"(?<=\\\\.{1,90})-2x-RIFE(?=\\.[^.\\\\]+$)",
 			"(?<=\\\\.{1,90})-fuckbe.com(?=\\.[^.\\\\]+$)",
@@ -482,6 +514,9 @@ public class RenameFile {
 	};
 
 	private static String[][] adReplaceRegs = new String [][] {
+//		{"(?<=\\\\)\\[([^]]+)\\](?=[^\\\\]+$)", "$1"},   // [abc]def.mp4  => abcdef.mp4
+		
+
 		{"(?<=\\\\)\\(?+([^(.]+)\\.[^(\\)]+\\)(?=[^\\\\]+$)", "$1-"}, // (vkrm1001.abcdef)new-artist.mp4 => vkrm1001-new-artist.mp4
 		
 		{"(?<=\\\\)(FacialAbuse )(?=E\\d{1,4}[^\\\\]+$)", "FacialAbuse."},
@@ -501,68 +536,33 @@ public class RenameFile {
 		{"(?<=\\\\)([^\\\\]*[^_\\\\]{1,99})(_{1,9}vrhard_{1,9})(?=[^\\\\]+$)", "VRHard_$1_"}, // the_suckubus_ORIGINAL_ENCODEDp_vrhard__180_lr.mp4 -> // VRHard_the_suckubus_ORIGINAL_ENCODEDp_180_lr.mp4
 		{"(?<=\\\\)([^\\\\]*[^_\\\\]{1,99})(_{1,9}VRMansion_{1,9})(?=[^\\\\]+$)", "VRMansion_$1_"}, // the_suckubus_ORIGINAL_ENCODEDp_vrhard__180_lr.mp4 -> // VRHard_the_suckubus_ORIGINAL_ENCODEDp_180_lr.mp4
 
-		{"(?<=\\\\)(VRConk.com)[ _-]{0,9}(?=[^\\\\]+$)", "VRConk_"},
+		// TODO: below is is correct????
+		{"(?<=\\\\)((VRConk).com)[ _-]{0,9}(?=[^\\\\]+$)", "$1_"},
+		{"(?<=\\\\)\\[(ARPorn).com\\](?=[^\\\\]+$)", "$1_"},
+		{"(?<=\\\\)\\[(CzechVRFetish).com\\](?=[^\\\\]+$)", "$1_"},
+		{"(?<=\\\\)\\[(VirtualTaboo).com\\](?=[^\\\\]+$)", "$1_"},
+		{"(?<=\\\\)\\[([^\\]]+VR)\\.com\\](?=[^\\\\]+$)", "$1_"},     // [18VR.com]SybilA-SendNudes8KAIUpscaledRemaster(Unofficial)8K.mp4 -> 18VR-SybilA-SendNudes8KAIUpscaledRemaster(Unofficial)8K.mp4
+		{"(?<=\\\\)\\[(VR[^\\]]+)\\.com\\](?=[^\\\\]+$)", "$1_"},     // [VRLatina.com]CarolinaGuerrero-I'mYourPresent8K.mp4 -> VRLatina-CarolinaGuerrero-I'mYourPresent8K.mp4
+		{"(?<=\\\\)\\[Migoto.VR\\](?=[^\\\\]+$)", "MigotoVR_"},
+		{"(?<=\\\\)\\[Plushies.tv\\](?=[^\\\\]+$)", "PlushiesTV_"},
 		{"(?<=\\\\)(Plus\\.33)[ _\\.-]{0,9}(?=[^\\\\]+$)", "Plus33_"},
+		{"(?<=\\\\)Mugur Porn VR[ _\\.-]{0,9}(?=[^\\\\]+$)", "MugurPornVR"},
+		{"(?<=\\\\)Steel VR[ _\\.-]{0,9}(?=[^\\\\]+$)", "SteelVR"},
+		
+		{"(?<=\\\\)(NaughtyAmericaVR)[ _-]{0,9}(?=[^\\\\]+$)", "NaughtyAmerica-"}, // NaughtyAmericaVR-108-8K.mp4 -> NaughtyAmerica-108-8K.mp4
 		
 		{"(?<=\\\\)JVR(?=\\d+(\\.8K)?[^\\\\]+$)", "JVRPorn_"},  // JVR100184.8K.mp4 -> JVRPorn_100184.8K.mp4
+		
 
-		// correct case [capital]
 		
-		{"(?<=\\\\)(3DPickUp)[. _-]{1,9}(?=[^\\\\]+$)", "3DPickup_"}, // 3DPickUp_e.mp4 => 3DPickup_e.mp4
-		{"(?<=\\\\)(virtualtaboo)[. _-]{1,9}(?=[^\\\\]+$)", "VirtualTaboo_"}, // virtualtaboo_e.mp4 => VirtualTaboo_e.mp4
-		{"(?<=\\\\)(sinsvr)[. _-]{1,9}(?=[^\\\\]+$)", "SinsVR_"}, // sinsvr_e.mp4 => SinsVR_e.mp4
-		{"(?<=\\\\)(vrpornjack)[. _-]{1,9}(?=[^\\\\]+$)", "VRPornJack_"}, // vrpornjack_e.mp4 => VRPornJack_e.mp4
-		{"(?<=\\\\)(no2studiovr)[. _-]{1,9}(?=[^\\\\]+$)", "No2StudioVR_"}, // no2studiovr_e.mp4 => No2StudioVR_e.mp4
-		{"(?<=\\\\)(vrvr)[. _-]{1,9}(?=[^\\\\]+$)", "VRVR-"}, // vrvr_108.mp4 => VRVR_108.mp4
-		{"(?<=\\\\)(VRCONK|vrconk)[. _-]{1,9}(?=[^\\\\]+$)", "VRConk-"}, // VRCONK-108.mp4 => VRConk-108.mp4
-		{"(?<=\\\\)(VRHARD|vrhard)[. _-]{1,9}(?=[^\\\\]+$)", "VRHard-"}, // VRHARD-108.mp4 => VRHard-108.mp4
-		{"(?<=\\\\)(VRmodels|vrmodels)[. _-]{1,9}(?=[^\\\\]+$)", "VRModels-"}, // VRmodels-108.mp4 => VRModels-108.mp4
-		{"(?<=\\\\)(PsPorn|psporn)[. _-]{1,9}(?=[^\\\\]+$)", "PSPorn-"}, // PsPorn-108.mp4 => PSPorn-108.mp4
-		{"(?<=\\\\)(VRcosplayx|vrcosplayx)[. _-]{1,9}(?=[^\\\\]+$)", "VRCosplayX-"}, // vrcosplayx-108.mp4 => VRCosplayX-108.mp4
-		{"(?<=\\\\)(Squeezevr|Squeeze VR)[. _-]{1,9}(?=[^\\\\]+$)", "SqueezeVR-"}, // Squeezevr-108.mp4 => SqueezeVR-108.mp4
-		{"(?<=\\\\)(realjamvr)([. _-]{1,9})(?=[^\\\\]+$)", "RealJamVR-"}, // realjamvr-108.mp4 => RealJamVR-108.mp4
-//		{"(?<=\\\\)(vredging)([. _-]{1,9})(?=[^\\\\]+$)", "VREdging-"}, // vredging-108.mp4 => VREdging-108.mp4
-		{"(?<=\\\\)(jimmydraws)([. _-]{1,9})(?=[^\\\\]+$)", "JimmyDraws-"}, // jimmydraws-108.mp4 => JimmyDraws-108.mp4
-		{"(?<=\\\\)(lethal-?hardcore-?vr)([. _-]{1,9})(?=[^\\\\]+$)", "LethalHardcoreVR-"}, // lethalhardcorevr-108.mp4 => LethalHardcoreVR-108.mp4
-		{"(?<=\\\\)(noir)([. _-]{1,9})(?=[^\\\\]+$)", "Noir-"}, // noir-108.mp4 => Noir-108.mp4
-		{"(?<=\\\\)(tadpolexxxstudio)([. _-]{1,9})(?=[^\\\\]+$)", "TadPoleXXXStudio-"}, // tadpolexxxstudio-108.mp4 => TadPoleXXXStudio-108.mp4
-		{"(?<=\\\\)(vrlatina)([. _-]{1,9})(?=[^\\\\]+$)", "VRLatina-"}, // vrlatina-108.mp4 => VRLatina-108.mp4
-		{"(?<=\\\\)(covertjapan)([. _-]{1,9})(?=[^\\\\]+$)", "CovertJapan-"}, // covertjapan-108.mp4 => CovertJapan-108.mp4
-		{"(?<=\\\\)(czechvrcasting)([. _-]{1,9})(?=[^\\\\]+$)", "CzechVRCasting-"}, // covertjapan-108.mp4 => CovertJapan-108.mp4
-		{"(?<=\\\\)(pervrt)([. _-]{1,9})(?=[^\\\\]+$)", "perVRt-"}, // pervrt-108.mp4 => perVRt-108.mp4
-		{"(?<=\\\\)(SWALLOWBAY)([. _-]{1,9})(?=[^\\\\]+$)", "SwallowBay-"}, // SWALLOWBAY_-108.mp4 => SwallowBay-108.mp4
-		{"(?<=\\\\)(virtualrealporn)([. _-]{1,9}\\.com)(?=[^\\\\]+$)", "VirtualRealPorn-"}, // virtualrealporn-108.mp4 => VirtualRealPorn-108.mp4
-		{"(?<=\\\\)(vrallure)([. _-]{1,9})(?=[^\\\\]+$)", "VRAllure-"}, // vrallure-108.mp4 => VRAllure-108.mp4
-		{"(?<=\\\\)(vroomed)([. _-]{1,9})(?=[^\\\\]+$)", "VRoomed-"}, // vroomed-108.mp4 => VRoomed-108.mp4
-		{"(?<=\\\\)(slr_originals)([. _-]{1,9})(?=[^\\\\]+$)", "SLR_Originals-"}, // slr_originals_wakeup_call.mp4 => SLR_Originals-wakeup_call.mp4
-//		{"(?<=\\\\)(vrpornjack)([. _-]{1,9})(?=[^\\\\]+$)", "VRPornJack-"}, // vrpornjack-108.mp4 => VRPornJack-108.mp4
-		{"(?<=\\\\)(wankzvr)([. _-]{1,9})(?=[^\\\\]+$)", "WankzVR-"}, // wankzvr-108.mp4 => WankzVR-108.mp4
-		{"(?<=\\\\)(czechvrfetish)([. _-]{1,9})(?=[^\\\\]+$)", "CzechVRFetish-"}, // czechvrfetish-108.mp4 => CzechVRFetish-108.mp4
-		{"(?<=\\\\)(kinkvr)([. _-]{1,9})(?=[^\\\\]+$)", "KinkVR-"}, // kinkvr-108.mp4 => KinkVR-108.mp4
-		{"(?<=\\\\)(milfvr)([. _-]{1,9})(?=[^\\\\]+$)", "MilfVR-"}, // milfvr-108.mp4 => MilfVR-108.mp4
-		{"(?<=\\\\)(virtualrealporn)([. _-]{1,9})(?=[^\\\\]+$)", "VirtualRealPorn-"}, // virtualrealporn-108.mp4 => VirtualRealPorn-108.mp4
-		{"(?<=\\\\)(xvirtual)([. _-]{1,9})(?=[^\\\\]+$)", "XVirtual-"}, // xvirtual-108.mp4 => XVirtual-108.mp4
-		{"(?<=\\\\)(POVcentralVR)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // POVcentralVR-108.mp4 => POVCentralVR-108.mp4
-		{"(?<=\\\\)(povcentralvr)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // povcentralvr-108.mp4 => POVCentralVR-108.mp4
-		{"(?<=\\\\)(POVR\\.originals)([. _-]{1,9})(?=[^\\\\]+$)", "POVROriginals-"}, // POVR originals-108.mp4 => POVROriginals-108.mp4
-		{"(?<=\\\\)(POVR -)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // POVR - 108.mp4 => POVCentralVR-108.mp4
-		{"(?<=\\\\)(VRBANGERS)([. _-]{1,9})(?=[^\\\\]+$)", "VRBangers-"}, // VRBANGERS-108.mp4 => VRBangers-108.mp4
-		{"(?<=\\\\)(vrpornnow|VRPornnow)([. _-]{1,9})(?=[^\\\\]+$)", "VRPornNow-"}, // vrpornnow-108.mp4 => VRPornNow-108.mp4
-		{"(?<=\\\\)(peepingthom)([. _-]{1,9})(?=[^\\\\]+$)", "PeepingThom-"}, // peepingthom-108.mp4 => PeepingThom-108.mp4
-		{"(?<=\\\\)(Peeping_Thom)([. _-]{1,9})(?=[^\\\\]+$)", "PeepingThom-"}, // Peeping_Thom-108.mp4 => PeepingThom-108.mp4
-		{"(?<=\\\\)(BadoinkVR)([. _-]{1,9})(?=[^\\\\]+$)", "BaDoinkVR-"}, // BadoinkVR-108.mp4 => BaDoinkVR-108.mp4
-		{"(?<=\\\\)(deepinsex)([. _-]{1,9})(?=[^\\\\]+$)", "Deepinsex-"}, // deepinsex-108.mp4 => Deepinsex-108.mp4
-		{"(?<=\\\\)(DeepInSex)([. _-]{1,9})(?=[^\\\\]+$)", "Deepinsex-"}, // DeepInSex-108.mp4 => Deepinsex-108.mp4
-		{"(?<=\\\\)(TmwVRNet)([. _-]{1,9})(?=[^\\\\]+$)", "TmwVRnet-"}, // TmwVRNet-108.mp4 => TmwVRnet-108.mp4
-		{"(?<=\\\\)(sexbabesvr)([. _-]{1,9})(?=[^\\\\]+$)", "SexBabesVR-"}, // stockingsvr-108.mp4 => SexBabesVR-108.mp4
-		{"(?<=\\\\)(stockingsvr)([. _-]{1,9})(?=[^\\\\]+$)", "StockingsVR-"}, // stockingsvr-108.mp4 => StockingsVR-108.mp4
-		{"(?<=\\\\)(VREdging)([. _-]{1,9})(?=[^\\\\]+$)", "VRedging-"}, // VREdging-108.mp4 => VRedging-108.mp4
-		{"(?<=\\\\)(VRsolos)([. _-]{1,9})(?=[^\\\\]+$)", "VRSolos-"}, // VRsolos-108.mp4 => VRSolos-108.mp4
-//		{"(?<=\\\\)(povcentralvr)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // povcentralvr-108.mp4 => POVCentralVR-108.mp4
-//		{"(?<=\\\\)(povcentralvr)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // povcentralvr-108.mp4 => POVCentralVR-108.mp4
+		
+		
 //		{"(?<=\\\\)(povcentralvr)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // povcentralvr-108.mp4 => POVCentralVR-108.mp4
 		
 		
+		
+		
+		{"(?<=\\\\)([0-9]{1,4})-(czechar)([. _-]{1,9})(?=[^\\\\]+$)", "CzechAR-$1-"}, // VRsolos-108.mp4 => VRSolos-108.mp4
 		
 		{"(?<=\\\\)(vrixxens)([. _-]{1,9})(?=[^\\\\]+$)", "VRixxens$2"}, // vrixxens-108.mp4 => VRixxens-108.mp4
 		{"(?<=\\\\)(Taboo[ _-]VR[ _-]Porn)([. _-]{1,9})(?=[^\\\\]+$)", "TabooVRPorn-"}, // Taboo VR Porn-108.mp4 => TabooVRPorn-108.mp4
@@ -607,6 +607,8 @@ public class RenameFile {
 		
 		{"(?<=\\\\)SexLikeReal(?=[ _.-][^\\\\]+$)", "SLR"},
 		{"(?<=\\\\)All Anal VR(?=[ _.-][^\\\\]+$)", "AllAnalVR"},
+		{"(?<=\\\\)Juggs.Co(?=[ _.-][^\\\\]+$)", "JuggsCo"},
+		
 		
 		
 		 
@@ -619,7 +621,7 @@ public class RenameFile {
 		{"(?<=\\\\)\\[([a-zA-Z0-9-]+)\\][ _-]{0,9}(?=[^\\\\]+$)", "$1-"},
 		{"(?<=\\\\)\\(([a-zA-Z0-9-]+)\\)[ _-]{0,9}(?=[^\\\\]+$)", "$1-"},
 
-		{"(?<=\\\\)\\[([^]]+)\\](?=[^\\\\]+$)", "$1"},   // [abc]def.mp4  => abcdef.mp4
+		
 		{"(?<=\\\\)《([^]]+)》(?=[^\\\\]+$)", "$1"},   // 《abc》def.mp4  => abcdef.mp4
 
 
@@ -689,7 +691,11 @@ public class RenameFile {
 
 		{"(?<=\\\\)(DSVR-)(.*)(?=\\.[^.\\\\]+$)", "3$1$2"},   // DSVR-001-1 -> 3DSVR-001-1
 
-		{"(?<=\\\\)1(3dsvr)(?=.*\\.[^.\\\\]+$)", "3DSVR"},   // DSVR-001-1 -> 3DSVR-001-1
+		{"(?<=\\\\)1(3dsvr)(?=.*\\.[^.\\\\]+$)", "3DSVR"},   // 13DSVR-001-1 -> 3DSVR-001-1
+		{"(?<=\\\\)1(SVACE)(?=.*\\.[^.\\\\]+$)", "SVACE"},   // 1SVACE-001-1 -> SVACE-001-1
+		{"(?<=\\\\)1(SVGAL)(?=.*\\.[^.\\\\]+$)", "SVGAL"},   // 1SVGAL-001-1 -> SVGAL-001-1
+		{"(?<=\\\\)1(NAMHVR)(?=.*\\.[^.\\\\]+$)", "NAMHVR"},   // 1NAMHVR-001-1 -> NAMHVR-001-1
+		
 
 		{"(?<=\\\\)3dsvr-(\\d{3})-(?=[^\\\\]+\\.[^.\\\\]+$)", "3DSVR-0$1-"},    // 3dsvr-123-1.mp4   => 3dsvr-0123-1.mp4
 		{"(?<=\\\\)3(dsvr|DSVR)0(\\d{4})-(?=[^\\\\]+\\.[^.\\\\]+$)", "3DSVR-$2-"},     // 3dsvr01234-1.mp4 => 3dsvr-1234-1.mp4
@@ -714,8 +720,14 @@ public class RenameFile {
 
 
 		{"(?<=\\\\)povr[-\\.]originals(?=[-_ \\.][^\\\\]+\\.[^.\\\\]+$)", "POVROriginals"},
-
-
+		
+		{"(?<=\\\\)DarkRoomVR(?=[-_ \\.][^\\\\]+\\.[^.\\\\]+$)", "DRVR"},
+		{"(?<=\\\\)MUTINY ?VR(?=[-_ \\.][^\\\\]+\\.[^.\\\\]+$)", "MutinyVR"},
+		{"(?<=\\\\)Manny_S(?=[-_ \\.][^\\\\]+\\.[^.\\\\]+$)", "MannyS"},
+		{"(?<=\\\\)Pickup(?=[-_ \\.][^\\\\]+\\.[^.\\\\]+$)", "3DPickup"},
+		
+		
+		
 		// handle vac
 		{"(?<=\\\\)(vac-vrb)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "VRBangers-$1"},
 		{"(?<=\\\\)(vac-vrh)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "VRHush-$1"},
@@ -724,7 +736,9 @@ public class RenameFile {
 		{"(?<=\\\\)(vac-bdvr)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "BaDoinkVR-$1"},
 		{"(?<=\\\\)(vac-slr)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "SLR-$1"},
 		{"(?<=\\\\)(vac-zvr)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "ZEXYVR-$1"},
-		{"(?<=\\\\)(vac-drvr)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "DarkRoomVR-$1"},
+		{"(?<=\\\\)(vac-drvr)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "DRVR-$1"},
+		{"(?<=\\\\)(vac-svr)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "SinsVR-$1"}, // vac-svr210428abcnhopf-3584.mp4 -> SinsVR-vac-svr210428abcnhopf-3584.mp4
+		{"(?<=\\\\)(vac-kvr)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "KinkVR-$1"}, // vac-kvr211004mweg-3584_7168x3584_GOOD.mp4 -> KinkVR-vac-kvr211004mweg-3584_7168x3584_GOOD.mp4
 		{"(?<=\\\\)(vac-pg)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "NaughtyAmerica-PartyGirls-$1"},
 		{"(?<=\\\\)(vac-rpvr)(?=\\d{6}[^\\\\]+\\.[^.\\\\]+$)", "NaughtyAmerica-RealPornstars-$1"},
 
@@ -771,6 +785,87 @@ public class RenameFile {
 
 //		{"(?<=\\\\.{1,99})(-\\d+)([a-z])(?=[^\\\\]+$)", "$1-$2"},
 
+	};
+	
+	
+	private static String[][] adReplaceIRegs = new String [][] {
+		{"(?<=\\\\)(sexbabesvr)([. _-]{1,9})(?=[^\\\\]+$)", "SexBabesVR-"}, // sexbabesvr-108.mp4 => SexBabesVR-108.mp4
+		{"(?<=\\\\)(StripzVR)([. _-]{1,9})(?=[^\\\\]+$)", "StripzVR-"}, // StripzVR-108.mp4 => StripzVR-108.mp4
+		{"(?<=\\\\)(XSinsVR)[. _-]{1,9}(?=[^\\\\]+$)", "SinsVR-"}, // XSinsVR-108.mp4 => SinsVR-10.mp4
+		{"(?<=\\\\)(Pornnow)[. _-]{1,9}(?=[^\\\\]+$)", "VRPornoNow-"}, // Pornnow-108.mp4 => VRPornoNow-10.mp4
+		{"(?<=\\\\)(iStripper)[. _-]{1,9}(?=[^\\\\]+$)", "iStripperVR-"}, // iStripper-108.mp4 => iStripperVR-10.mp4
+		{"(?<=\\\\)(JackAndJillVR)[. _-]{1,9}(?=[^\\\\]+$)", "JackandJillVR-"}, // JackAndJillVR-108.mp4 => JackandJillVR-10.mp4
+		{"(?<=\\\\)(TSVirtuallovers)[. _-]{1,9}(?=[^\\\\]+$)", "TSVirtualLovers-"}, // TSVirtuallovers-108.mp4 => TSVirtualLovers-10.mp4
+		{"(?<=\\\\)(CovertJapan)[. _-]{1,9}(?=[^\\\\]+$)", "CovertJapanVR-"}, // CovertJapan-108.mp4 => CovertJapanVR-10.mp4
+		{"(?<=\\\\)(Virtual[ +_-]Papi)[. _-]{1,9}(?=[^\\\\]+$)", "VirtualPapi-"}, // Virtual_Papi-108.mp4 => VirtualPapi-10.mp4
+		{"(?<=\\\\)(Seductive VR)[. _-]{1,9}(?=[^\\\\]+$)", "SeductiveVR-"}, // Seductive VR-108.mp4 => SeductiveVR-10.mp4
+		
+		
+		// correct case [capital]
+		
+				{"(?<=\\\\)(3DPickUp)[. _-]{1,9}(?=[^\\\\]+$)", "3DPickup_"}, // 3DPickUp_e.mp4 => 3DPickup_e.mp4
+				{"(?<=\\\\)(sinsvr)[. _-]{1,9}(?=[^\\\\]+$)", "SinsVR_"}, // sinsvr_e.mp4 => SinsVR_e.mp4
+				{"(?<=\\\\)(vrpornjack)[. _-]{1,9}(?=[^\\\\]+$)", "VRPornJack_"}, // vrpornjack_e.mp4 => VRPornJack_e.mp4
+				{"(?<=\\\\)(no2studiovr)[. _-]{1,9}(?=[^\\\\]+$)", "No2StudioVR_"}, // no2studiovr_e.mp4 => No2StudioVR_e.mp4
+				{"(?<=\\\\)(vrvr)[. _-]{1,9}(?=[^\\\\]+$)", "VRVR-"}, // vrvr_108.mp4 => VRVR_108.mp4
+				{"(?<=\\\\)(VRCONK|vrconk)[. _-]{1,9}(?=[^\\\\]+$)", "VRConk-"}, // VRCONK-108.mp4 => VRConk-108.mp4
+				{"(?<=\\\\)(VRHARD|vrhard)[. _-]{1,9}(?=[^\\\\]+$)", "VRHard-"}, // VRHARD-108.mp4 => VRHard-108.mp4
+				{"(?<=\\\\)(VRmodels|vrmodels)[. _-]{1,9}(?=[^\\\\]+$)", "VRModels-"}, // VRmodels-108.mp4 => VRModels-108.mp4
+				{"(?<=\\\\)(PsPorn|psporn)[. _-]{1,9}(?=[^\\\\]+$)", "PSPorn-"}, // PsPorn-108.mp4 => PSPorn-108.mp4
+				{"(?<=\\\\)(VRcosplayx|vrcosplayx)[. _-]{1,9}(?=[^\\\\]+$)", "VRCosplayX-"}, // vrcosplayx-108.mp4 => VRCosplayX-108.mp4
+				{"(?<=\\\\)(Squeezevr|Squeeze VR)[. _-]{1,9}(?=[^\\\\]+$)", "SqueezeVR-"}, // Squeezevr-108.mp4 => SqueezeVR-108.mp4
+				{"(?<=\\\\)(realjamvr)([. _-]{1,9})(?=[^\\\\]+$)", "RealJamVR-"}, // realjamvr-108.mp4 => RealJamVR-108.mp4
+//				{"(?<=\\\\)(vredging)([. _-]{1,9})(?=[^\\\\]+$)", "VREdging-"}, // vredging-108.mp4 => VREdging-108.mp4
+				{"(?<=\\\\)(jimmydraws)([. _-]{1,9})(?=[^\\\\]+$)", "JimmyDraws-"}, // jimmydraws-108.mp4 => JimmyDraws-108.mp4
+				{"(?<=\\\\)(lethal-?hardcore-?vr)([. _-]{1,9})(?=[^\\\\]+$)", "LethalHardcoreVR-"}, // lethalhardcorevr-108.mp4 => LethalHardcoreVR-108.mp4
+				{"(?<=\\\\)(noir)([. _-]{1,9})(?=[^\\\\]+$)", "Noir-"}, // noir-108.mp4 => Noir-108.mp4
+				{"(?<=\\\\)(tadpolexxxstudio)([. _-]{1,9})(?=[^\\\\]+$)", "TadPoleXXXStudio-"}, // tadpolexxxstudio-108.mp4 => TadPoleXXXStudio-108.mp4
+				{"(?<=\\\\)(vrlatina)([. _-]{1,9})(?=[^\\\\]+$)", "VRLatina-"}, // vrlatina-108.mp4 => VRLatina-108.mp4
+				{"(?<=\\\\)(covertjapan)([. _-]{1,9})(?=[^\\\\]+$)", "CovertJapan-"}, // covertjapan-108.mp4 => CovertJapan-108.mp4
+				{"(?<=\\\\)(czechvr)([. _-]{1,9})(?=[^\\\\]+$)", "CzechVR-"}, // czechvr.E108.mp4 => CzechVR.E108.mp4
+				{"(?<=\\\\)(czechvrcasting)([. _-]{1,9})(?=[^\\\\]+$)", "CzechVRCasting-"}, // czechvrcasting-108.mp4 => CzechVRCasting-108.mp4
+				{"(?<=\\\\)(czechvrfetish)([. _-]{1,9})(?=[^\\\\]+$)", "CzechVRFetish-"}, // czechvrfetish-108.mp4 => CzechVRFetish-108.mp4
+				{"(?<=\\\\)(pervrt)([. _-]{1,9})(?=[^\\\\]+$)", "perVRt-"}, // pervrt-108.mp4 => perVRt-108.mp4
+				{"(?<=\\\\)(SWALLOWBAY)([. _-]{1,9})(?=[^\\\\]+$)", "SwallowBay-"}, // SWALLOWBAY_-108.mp4 => SwallowBay-108.mp4
+				{"(?<=\\\\)(virtualrealporn)([. _-]{1,9}\\.com)(?=[^\\\\]+$)", "VirtualRealPorn-"}, // virtualrealporn-108.mp4 => VirtualRealPorn-108.mp4
+				{"(?<=\\\\)(vrallure)([. _-]{1,9})(?=[^\\\\]+$)", "VRAllure-"}, // vrallure-108.mp4 => VRAllure-108.mp4
+				{"(?<=\\\\)(vroomed)([. _-]{1,9})(?=[^\\\\]+$)", "VRoomed-"}, // vroomed-108.mp4 => VRoomed-108.mp4
+				{"(?<=\\\\)(slr_originals)([. _-]{1,9})(?=[^\\\\]+$)", "SLR_Originals-"}, // slr_originals_wakeup_call.mp4 => SLR_Originals-wakeup_call.mp4
+//				{"(?<=\\\\)(vrpornjack)([. _-]{1,9})(?=[^\\\\]+$)", "VRPornJack-"}, // vrpornjack-108.mp4 => VRPornJack-108.mp4
+				{"(?<=\\\\)(wankzvr)([. _-]{1,9})(?=[^\\\\]+$)", "WankzVR-"}, // wankzvr-108.mp4 => WankzVR-108.mp4
+				{"(?<=\\\\)(kinkvr)([. _-]{1,9})(?=[^\\\\]+$)", "KinkVR-"}, // kinkvr-108.mp4 => KinkVR-108.mp4
+				{"(?<=\\\\)(milfvr)([. _-]{1,9})(?=[^\\\\]+$)", "MilfVR-"}, // milfvr-108.mp4 => MilfVR-108.mp4
+				{"(?<=\\\\)(virtualrealporn)([. _-]{1,9})(?=[^\\\\]+$)", "VirtualRealPorn-"}, // virtualrealporn-108.mp4 => VirtualRealPorn-108.mp4
+				{"(?<=\\\\)(xvirtual)([. _-]{1,9})(?=[^\\\\]+$)", "XVirtual-"}, // xvirtual-108.mp4 => XVirtual-108.mp4
+				{"(?<=\\\\)(POVcentralVR)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // POVcentralVR-108.mp4 => POVCentralVR-108.mp4
+				{"(?<=\\\\)(povcentralvr)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // povcentralvr-108.mp4 => POVCentralVR-108.mp4
+				{"(?<=\\\\)(POVR\\.originals)([. _-]{1,9})(?=[^\\\\]+$)", "POVROriginals-"}, // POVR originals-108.mp4 => POVROriginals-108.mp4
+				{"(?<=\\\\)(POVRoriginals)([. _-]{1,9})(?=[^\\\\]+$)", "POVROriginals-"}, // POVR originals-108.mp4 => POVROriginals-108.mp4
+				{"(?<=\\\\)(POVR)([. _-]{1,9})(?=[^\\\\]+$)", "POVCentralVR-"}, // POVR - 108.mp4 => POVCentralVR-108.mp4
+				{"(?<=\\\\)(VRBANGERS)([. _-]{1,9})(?=[^\\\\]+$)", "VRBangers-"}, // VRBANGERS-108.mp4 => VRBangers-108.mp4
+				{"(?<=\\\\)(vrpornnow|VRPornnow)([. _-]{1,9})(?=[^\\\\]+$)", "VRPornNow-"}, // vrpornnow-108.mp4 => VRPornNow-108.mp4
+				{"(?<=\\\\)(peepingthom)([. _-]{1,9})(?=[^\\\\]+$)", "PeepingThom-"}, // peepingthom-108.mp4 => PeepingThom-108.mp4
+				{"(?<=\\\\)(Peeping_Thom)([. _-]{1,9})(?=[^\\\\]+$)", "PeepingThom-"}, // Peeping_Thom-108.mp4 => PeepingThom-108.mp4
+				{"(?<=\\\\)(BadoinkVR)([. _-]{1,9})(?=[^\\\\]+$)", "BaDoinkVR-"}, // BadoinkVR-108.mp4 => BaDoinkVR-108.mp4
+//				{"(?<=\\\\)(deepinsex)([. _-]{1,9})(?=[^\\\\]+$)", "Deepinsex-"}, // deepinsex-108.mp4 => Deepinsex-108.mp4
+				{"(?<=\\\\)(DeepInSex)([. _-]{1,9})(?=[^\\\\]+$)", "Deepinsex-"}, // DeepInSex-108.mp4 => Deepinsex-108.mp4
+				{"(?<=\\\\)(TmwVRNet)([. _-]{1,9})(?=[^\\\\]+$)", "TmwVRnet-"}, // TmwVRNet-108.mp4 => TmwVRnet-108.mp4
+				{"(?<=\\\\)(sexbabesvr)([. _-]{1,9})(?=[^\\\\]+$)", "SexBabesVR-"}, // stockingsvr-108.mp4 => SexBabesVR-108.mp4
+				{"(?<=\\\\)(stockingsvr)([. _-]{1,9})(?=[^\\\\]+$)", "StockingsVR-"}, // stockingsvr-108.mp4 => StockingsVR-108.mp4
+				{"(?<=\\\\)(VREdging)([. _-]{1,9})(?=[^\\\\]+$)", "VRedging-"}, // VREdging-108.mp4 => VRedging-108.mp4
+				{"(?<=\\\\)(VRsolos)([. _-]{1,9})(?=[^\\\\]+$)", "VRSolos-"}, // VRsolos-108.mp4 => VRSolos-108.mp4
+				{"(?<=\\\\)(Kinkvr)([. _-]{1,9})(?=[^\\\\]+$)", "KinkVR-"}, // Kinkvr-108.mp4 => KinkVR-108.mp4
+				{"(?<=\\\\)(kinkVR)([. _-]{1,9})(?=[^\\\\]+$)", "KinkVR-"}, // kinkVR-108.mp4 => KinkVR-108.mp4
+				{"(?<=\\\\)(VRHotwife)([. _-]{1,9})(?=[^\\\\]+$)", "VRHotWife-"}, // VRHotwife-108.mp4 => VRHotWife-108.mp4
+				{"(?<=\\\\)(vrspy)([. _-]{1,9})(?=[^\\\\]+$)", "VRSpy-"}, // vrspy-108.mp4 => VRSpy-108.mp4
+				{"(?<=\\\\)(18vr)([. _-]{1,9})(?=[^\\\\]+$)", "18VR-"}, // 18vr-108.mp4 => 18VR-108.mp4
+				{"(?<=\\\\)(ARPORN)([. _-]{1,9})(?=[^\\\\]+$)", "ARPorn-"}, // ARPORN-108.mp4 => ARPorn-108.mp4
+				{"(?<=\\\\)(immerSex)([. _-]{1,9})(?=[^\\\\]+$)", "ImmerSex-"}, // immerSex-108.mp4 => ImmerSex-108.mp4
+				{"(?<=\\\\)(kinkygirlsberlin)([. _-]{1,9})(?=[^\\\\]+$)", "KinkyGirlsBerlin-"}, // kinkygirlsberlin-108.mp4 => KinkyGirlsBerlin-108.mp4
+				{"(?<=\\\\)(Vroomed)([. _-]{1,9})(?=[^\\\\]+$)", "VRoomed-"}, // Vroomed-108.mp4 => VRoomed-108.mp4
+				{"(?<=\\\\)(Blush Erotica)([. _-]{1,9})(?=[^\\\\]+$)", "BlushErotica-"}, // Blush Erotica_108.mp4 => BlushErotica-108.mp4
+				{"(?<=\\\\)(Fuckpassvr)([. _-]{1,9})(?=[^\\\\]+$)", "FuckPassVR-"}, // Fuckpassvr-108.mp4 => FuckPassVR-108.mp4
+				{"(?<=\\\\)(realitylovers)([. _-]{1,9})(?=[^\\\\]+$)", "Realitylovers-"}, // realitylovers-108.mp4 => Realitylovers-108.mp4
 	};
 
 
@@ -882,6 +977,38 @@ public class RenameFile {
 		}
 		return file;
 	}
+	
+	// TODO: refactor this funtion and replaceAds 
+	public static File replaceIAds(File file) {
+		String oriAbsPath = file.getPath();
+		String newAbsPath = oriAbsPath;
+
+//		ComLogUtil.info("oriAbsPath: " + oriAbsPath);
+//		ComLogUtil.info("oriAbsPath over");
+
+		for(int i = 0; i < adReplaceIRegs.length; i++) {
+			String[] currentRules = adReplaceIRegs[i];
+			String currentReg = currentRules[0];
+			String currentReplacement = currentRules[1];
+//			ComLogUtil.info("oriAbsPath: " + oriAbsPath + ", currentReg:" + currentReg);
+			newAbsPath = ComRegexUtil.replaceByRegexIGroup(oriAbsPath, currentReg, currentReplacement);
+//			newAbsPath = ComRegexUtil.replaceByRegexGroup(oriAbsPath, currentReg, currentReplacement);
+
+			if(!oriAbsPath.equals(newAbsPath)) { // only do rename when needed
+				File newFile = ComRenameUtil.findAndAddNumberSuffix(new File(newAbsPath));
+				boolean renameRet = (!isPrintOnly ? file.renameTo(newFile) : false);
+				String logStr = "Need to rename from/to" + ":" + renameRet + " by reg: " + currentReg + ", replacement: " + currentReplacement + "\n" + oriAbsPath + "\n" + newFile;
+				if(renameRet) {
+					ComLogUtil.error(logStr);
+					return newFile;
+				} else {
+					ComLogUtil.error(logStr);
+					return file;
+				}
+			}
+		}
+		return file;
+	}
 
 	private static void doOneLevel(File dir) throws Exception {
 		File[] nextFolderArr = new File[1];
@@ -914,6 +1041,9 @@ public class RenameFile {
 				} else {
 					if(originFile == file && isRemoveAdsStr) file = removeAdsPrefix(file);
 					if(originFile == file && isRemoveAdsStr) file = removePreSuffSpace(file);
+					if(originFile == file && isUppercaseVideoId) {
+						file = replaceIAds(file);
+					}
 					if(originFile == file && isUppercaseVideoId) file = replaceAds(file);
 //				if(originFile == file) removeAdsPrefix(file);
 //				if(originFile == file) removePreSuffSpace(file);
@@ -982,11 +1112,11 @@ public class RenameFile {
 		File ret = file;
 
 		if(!isVideoResolutionAlreadyAdded) {
-			VideoResolution videoResolution = ComMediaUtil.getVideoResolution(file);
-			if(videoResolution.toString().length() == 0) {
+			String videoResolution = ComMediaUtil.getVideoResolution(file).toString();
+			if(videoResolution.length() == 0) {
 				throw new Exception("videoResolution length invalid - videoResolution:" + videoResolution);
 			}
-			int firstNumber = Integer.parseInt(videoResolution.toString().charAt(0) + "", 10);
+			int firstNumber = Integer.parseInt(videoResolution.charAt(0) + "", 10);
 			if(firstNumber > appendResultionIfFirstNumberGreaterThan) {
 				fileName.append("_" + videoResolution);
 				ret = fileName.toFile();

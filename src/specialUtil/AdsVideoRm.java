@@ -53,9 +53,17 @@ public class AdsVideoRm {
 	private static Long dupSizeThrottleInKB = 0l;
 	private static Long dupDurationThrottleInSec = 0l;
 	private static Long videoAdSizeLimitInMB = 100l;
+	/**
+	 * 0 for disable this feature
+	 * greater than 0 means to remove the video, whose first number of resolution is lower than removeLowResolutionVideoFirstNumber
+	 */
+	private static Long removeLowResolutionVideoFirstNumber = 0l;
+	
 	private static Boolean isRemoveSameSizefile = false;
 	private static Boolean isRemoveSameFileLowResfile = false;
 	private static Boolean isRemoveSameDurationfile = false;
+	
+	
 	
 	
 	public static void main(String[] args) throws Exception {
@@ -72,6 +80,8 @@ public class AdsVideoRm {
 		dupSizeThrottleInKB = Long.parseLong(configManager.getString("dupSizeThrottleInKB"), 10);
 		dupDurationThrottleInSec = Long.parseLong(configManager.getString("dupDurationThrottleInSec"), 10);
 		videoAdSizeLimitInMB = Long.parseLong(configManager.getString("videoAdSizeLimitInMB"), 10);
+		removeLowResolutionVideoFirstNumber = Long.parseLong(configManager.getString("removeLowResolutionVideoFirstNumber"), 10);
+		
 		isRemoveSameSizefile = "true".equalsIgnoreCase(configManager.getString("isRemoveSameSizefile"));
 		isRemoveSameFileLowResfile = "true".equalsIgnoreCase(configManager.getString("isRemoveSameFileLowResfile"));
 		isRemoveSameDurationfile = "true".equalsIgnoreCase(configManager.getString("isRemoveSameDurationfile"));
@@ -282,6 +292,19 @@ public class AdsVideoRm {
 							if(filesizeMB < videoAdSizeLimitInMB) {
 								needToRm = true;
 								grepMark = "videoSize<" + videoAdSizeLimitInMB + "MB";
+							}
+							
+							if(removeLowResolutionVideoFirstNumber > 0) {
+								VideoResolution videoResolution = ComMediaUtil.getVideoResolution(file);
+								Integer width = videoResolution.getWidth();
+								if(videoResolution.toString().length() == 0) {
+									throw new Exception("videoResolution length invalid - videoResolution:" + videoResolution);
+								}
+								
+								if(width < removeLowResolutionVideoFirstNumber) {
+									needToRm = true;
+									grepMark = "removeLowResolutionVideoFirstNumber: videoResolution:" + videoResolution + ", width: " + width + " < " + removeLowResolutionVideoFirstNumber;
+								}
 							}
 
 							if(isAdsFile(file)) {

@@ -55,6 +55,7 @@ public class TorrentInfoExtractor {
 		FolderToHandle = configManager.getString("FolderToHandle").trim();
 		isPrintOnly = "true".equalsIgnoreCase(configManager.getString("isPrintOnly"));
 		
+		ComLogUtil.info("----------------------------------------Start------------------------------------------");
 		doOneLevelRm(new File(FolderToHandle));
 	}
 	
@@ -136,10 +137,10 @@ public class TorrentInfoExtractor {
 				continue;
 			}
 			
-			Boolean is8kOnly = true;
+			String is8kOnly = "true1";
 			Boolean isRarOnly = true;
 			
-			if(is8kOnly) {
+			if(is8kOnly.equalsIgnoreCase("true")) {
 				// save 8k only rar
 				if(is8KMode) {
 					
@@ -157,6 +158,7 @@ public class TorrentInfoExtractor {
 				// save non-8k only rar
 				if(!is8KMode && isRar) {
 					links.add(ed2kLink);
+					ComLogUtil.info("adding link: " + ed2kLink + " from file: " + file.getPath());
 				}
 			}
 			
